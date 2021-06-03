@@ -18,15 +18,21 @@ token*
 tk_new (tk_type type, int num);
 
 token*
-tk_append (token *head, token *n);
+tk_append_ll (token *head, token *n);
 
 token*
-tk_delete_arr (token *head);
+tk_delete_ll (token *head);
 
 int
-tk_len (token *head);
+tk_len_ll (token *head);
 
 void
-tk_print_arr (token *head);
+tk_print_ll (token *head);
+
+token*
+tk_ll_to_arr (token *head);
+
+void
+tk_print_arr (token* arr, int len);
 
 #endif

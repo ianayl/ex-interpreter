@@ -15,7 +15,7 @@ tk_new (tk_type type, int num)
 }
 
 token*
-tk_append (token *head, token *n)
+tk_append_ll (token *head, token *n)
 {
 	if (!head) return n;
 
@@ -25,7 +25,7 @@ tk_append (token *head, token *n)
 }
 
 token*
-tk_delete_arr (token *head)
+tk_delete_ll (token *head)
 {
 	token *p;
 	while (head) {
@@ -37,7 +37,7 @@ tk_delete_arr (token *head)
 }
 
 int
-tk_len (token *head)
+tk_len_ll (token *head)
 {
 	int res;
 	for (res = 0; head; head = head->next)
@@ -46,7 +46,7 @@ tk_len (token *head)
 }
 
 void
-tk_print_arr (token *head)
+tk_print_ll (token *head)
 {
 	for (token* p = head; p; p = p->next) {
 		if (p->type == INTEGER)
@@ -60,4 +60,32 @@ tk_print_arr (token *head)
 		else
 			printf("Type: INVALID TYPE\n");
 	}
+}
+
+token*
+tk_ll_to_arr (token *head)
+{
+	int len = tk_len_ll(head);
+	token* res = (token*) malloc(sizeof(token) * len);
+	for (int i = 0; i < len; i++) {
+		res[i] = *head;
+		head = head->next;
+	}
+	return res;
+}
+
+void
+tk_print_arr (token* arr, int len)
+{
+	for (int i = 0; i < len; i++)
+		if (arr[i].type == INTEGER)
+			printf("Type: INTEGER, num: %d\n", arr[i].num);
+		else if (arr[i].type == OP_ADD)
+			printf("Type: OP_ADD (+)\n");
+		else if (arr[i].type == OP_MUL)
+			printf("Type: OP_MUL (*)\n");
+		else if (arr[i].type == NULL_TYPE)
+			printf("Type: NULL_TYPE\n");
+		else
+			printf("Type: INVALID TYPE\n");
 }

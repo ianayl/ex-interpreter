@@ -1,21 +1,28 @@
 #include "tokens.h"
+#include <stdlib.h>
 
 void 
-parse_root (token *src)
+parse_root (token* src, int len_src)
 {
 	int cur_i;
-	int len_src = tk_len(src);
-
 }
 
 int
 main ()
 {
-	token* src = tk_new(INTEGER, 4);
-	tk_append(src, tk_new(OP_ADD, 0));
-	tk_append(src, tk_new(INTEGER, 2));
-	tk_append(src, tk_new(OP_MUL, 0));
-	tk_append(src, tk_new(INTEGER, 0));
+	token* list = tk_new(INTEGER, 4);
+	tk_append_ll(list, tk_new(OP_ADD, 0));
+	tk_append_ll(list, tk_new(INTEGER, 2));
+	tk_append_ll(list, tk_new(OP_MUL, 0));
+	tk_append_ll(list, tk_new(INTEGER, 0));
 
-	tk_delete_arr(src);
+	token* src = tk_ll_to_arr(list);
+	int src_len = tk_len_ll(list);
+
+	parse_root(src, src_len);
+
+	tk_delete_ll(list);
+
+	tk_print_arr(src, src_len);
+	free(src);
 }

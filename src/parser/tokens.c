@@ -55,8 +55,8 @@ tk_print_ll (token *head)
 			printf("Type: OP_ADD (+)\n");
 		else if (p->type == OP_MUL)
 			printf("Type: OP_MUL (*)\n");
-		else if (p->type == NULL_TYPE)
-			printf("Type: NULL_TYPE\n");
+		else if (p->type == NULL_TOKEN)
+			printf("Type: NULL_TOKEN\n");
 		else
 			printf("Type: INVALID TYPE\n");
 	}
@@ -84,8 +84,19 @@ tk_print_arr (token* arr, int len)
 			printf("Type: OP_ADD (+)\n");
 		else if (arr[i].type == OP_MUL)
 			printf("Type: OP_MUL (*)\n");
-		else if (arr[i].type == NULL_TYPE)
-			printf("Type: NULL_TYPE\n");
+		else if (arr[i].type == NULL_TOKEN)
+			printf("Type: NULL_TOKEN\n");
 		else
 			printf("Type: INVALID TYPE\n");
+}
+
+/* Pops off the first element of the linkedlist */
+token*
+tk_pop_ll (token* head)
+{
+	if (!head)
+		return NULL;
+	token* res = head->next;
+	free(head);
+	return res;
 }

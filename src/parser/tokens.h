@@ -2,7 +2,7 @@
 #define TOKENS_H
 
 typedef enum token_type {
-	NULL_TYPE,
+	NULL_TOKEN,
 	INTEGER,
 	OP_ADD,
 	OP_MUL
@@ -14,25 +14,20 @@ typedef struct token {
 	struct token* next;
 } token;
 
-token* 
-tk_new (tk_type type, int num);
+token* tk_new (tk_type type, int num);
 
-token*
-tk_append_ll (token *head, token *n);
+token* tk_append_ll (token *head, token *n);
 
-token*
-tk_delete_ll (token *head);
+token* tk_delete_ll (token *head);
 
-int
-tk_len_ll (token *head);
+int tk_len_ll (token *head);
 
-void
-tk_print_ll (token *head);
+void tk_print_ll (token *head);
 
-token*
-tk_ll_to_arr (token *head);
+token* tk_ll_to_arr (token *head);
 
-void
-tk_print_arr (token* arr, int len);
+void tk_print_arr (token* arr, int len);
+
+token* tk_pop_ll (token *head);
 
 #endif

@@ -97,6 +97,7 @@ tk_pop_ll (token* head)
 	if (!head)
 		return NULL;
 	token* res = head->next;
-	free(head);
+	/* TODO free this */
+	// free(head);
 	return res;
 }

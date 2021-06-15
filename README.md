@@ -2,6 +2,8 @@
 
 A toy programming language meant as a way to learn how to write Interpreters
 
+Current state of the language: [current_grammar.md](https://github.com/ianayl/ex-interpreter/blob/main/parser/current_grammar.md)
+
 ## Note to self:
 
 ## Goals:

@@ -1,1 +1,3 @@
 arith
+*.o
+libraries/*

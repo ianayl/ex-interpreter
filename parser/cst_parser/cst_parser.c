@@ -1,102 +1,4 @@
-#include "tokens.h"
-#include <stdlib.h>
-#include <stdio.h>
-
-/* 
- * Current Grammar:
- *
- * Start -> Add
- * Add -> Mul '+' Add
- * Add -> Mul
- * Mul -> Term '*' Mul
- * Mul -> Term
- * Term -> Num
- * Term -> '-' Term
- * Term -> '(' Add ')'
- *
- * Left Refactored:
- *
- * Start -> Add
- *
- * Add -> Mul Add'
- * Add' -> '+' Add
- * Add' -> Epsilon
- *
- * Mul -> Term Mul'
- * Mul' -> '*' Mul
- * Mul' -> Epsilon
- *
- * Term -> Num
- * Term -> '-' Term
- * Term -> '(' Add ')'
- *
- */
-
-token* tokens = NULL;
-
-typedef enum CST_type {
-	CST_NULL,
-	CST_EPSILON,
-	CST_ADD,
-	CST_ADDP,
-	CST_MUL,
-	CST_MULP,
-	CST_TERM,
-	CST_NUM,
-} cst_type;
-
-typedef struct CST_node {
-	cst_type type;
-	struct CST_node *op1;
-	struct CST_node *op2;
-	int val;
-} cst_node;
-
-cst_node* 
-cst_new (cst_type type, cst_node *op1, cst_node *op2, int val)
-{
-	cst_node *res = (cst_node*) malloc(sizeof(cst_node));
-	res->type = type;
-	res->op1 = op1;
-	res->op2 = op2;
-	res->val = val;
-	return res;
-}
-
-void
-cst_print_node (cst_node* node)
-{
-	if (!node) return;
-
-	if (node->type == CST_NULL)
-		printf("CST: Null\n");
-	else if (node->type == CST_EPSILON)
-		printf("CST: Epsilon\n");
-	else if (node->type == CST_ADD)
-		printf("CST: Add\n");
-	else if (node->type == CST_ADDP)
-		printf("CST: Add'\n");
-	else if (node->type == CST_MUL)
-		printf("CST: Mul\n");
-	else if (node->type == CST_MULP) 
-		printf("CST: Mul'\n");
-	else if (node->type == CST_TERM) 
-		printf("CST: Term\n");
-	else if (node->type ==  CST_NUM)
-		printf("CST: Num: %d\n", node->val);
-	else
-		printf("cst_print_node: ERROR - Unknown type\n");
-}
-
-void
-cst_print_preorder (cst_node* head, int lvl)
-{
-	if (!head) return;
-	for (int i = 0; i < lvl; i++) printf("    ");
-	cst_print_node(head);
-	cst_print_preorder(head->op1, lvl + 1);
-	cst_print_preorder(head->op2, lvl + 1);
-}
+#include "parser/cst_parser/cst_parser.h"
 
 int 
 expect (tk_type type)
@@ -106,12 +8,6 @@ expect (tk_type type)
 	return 0;
 }
 
-cst_node* parse_root (token *head);
-cst_node* parse_add ();
-cst_node* parse_addp ();
-cst_node* parse_mul ();
-cst_node* parse_mulp ();
-cst_node* parse_term ();
 
 cst_node* 
 parse_root (token *head)

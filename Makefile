@@ -1,11 +1,23 @@
+CC = cc
 CFLAGS = -Wall -g
 
-TOKENS_H = src/parser/tokens.c src/parser/tokens.h
+LEXER = lexer/tokens
+CST_PARSER = parser/cst_parser/cst
 
-FILES = src/parser/parser.c $(TOKENS_H)
+ROOT = $(shell pwd)
 
-build: $(FILES)
-	cc $(CFLAGS) -o arith $^
+LIBRARIES = $(LEXER) $(CST_PARSER)
+
+build: libraries
+	$(CC) $(CFLAGS) -Iinclude -o arith parser/cst_parser/cst_parser.c libraries/*
+
+libraries:
+	mkdir libraries
+	for lib in $(LIBRARIES); do \
+		$(CC) -c $${lib}.c -I$(ROOT)/include; \
+	done
+	mv *.o $(ROOT)/libraries
 
 clean:
+	rm -r libraries
 	rm arith

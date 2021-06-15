@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "tokens.h"
+#include "lexer/tokens.h"
 
 token* 
 tk_new (tk_type type, int num)

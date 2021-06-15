@@ -89,12 +89,13 @@ cst_print_node (cst_node* node)
 }
 
 void
-cst_print_preorder (cst_node* head)
+cst_print_preorder (cst_node* head, int lvl)
 {
 	if (!head) return;
+	for (int i = 0; i < lvl; i++) printf("    ");
 	cst_print_node(head);
-	cst_print_preorder(head->op1);
-	cst_print_preorder(head->op2);
+	cst_print_preorder(head->op1, lvl + 1);
+	cst_print_preorder(head->op2, lvl + 1);
 }
 
 int 
@@ -236,11 +237,11 @@ parse_term ()
 int
 main ()
 {
-	token* list = tk_new(INTEGER, 4);
+	token* list = tk_new(INTEGER, 1);
 	tk_append_ll(list, tk_new(OP_ADD, 0));
 	tk_append_ll(list, tk_new(INTEGER, 2));
 	tk_append_ll(list, tk_new(OP_MUL, 0));
-	tk_append_ll(list, tk_new(INTEGER, 0));
+	tk_append_ll(list, tk_new(INTEGER, 3));
 
 	// token* src = tk_ll_to_arr(list);
 	// int src_len = tk_len_ll(list);
@@ -250,7 +251,7 @@ main ()
 	// tk_print_ll(list);
 
 	cst_node* test = parse_root(list);
-	cst_print_preorder(test);
+	cst_print_preorder(test, 0);
 	// cst_print_node(test);
 
 	// tk_delete_ll(list);

@@ -5,7 +5,10 @@ typedef enum token_type {
 	NULL_TOKEN,
 	INTEGER,
 	OP_ADD,
-	OP_MUL
+	OP_SUB,
+	OP_MUL,
+	LPAREN,
+	RPAREN
 } tk_type;
 
 typedef struct token {

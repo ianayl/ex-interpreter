@@ -6,6 +6,7 @@
 
 typedef enum AST_type {
 	AST_NULL,
+	AST_EPSILON,
 	AST_ADD,
 	AST_SUB,
 	AST_MUL,

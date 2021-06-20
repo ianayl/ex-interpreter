@@ -19,8 +19,9 @@ tk_append_ll (token *head, token *n)
 {
 	if (!head) return n;
 
-	for (; head->next; head = head->next);
-	head->next = n;
+	token* p = head;
+	for (; p->next; p = p->next);
+	p->next = n;
 	return head;
 }
 
@@ -55,6 +56,10 @@ tk_print_ll (token *head)
 			printf("Type: OP_ADD (+)\n");
 		else if (p->type == OP_MUL)
 			printf("Type: OP_MUL (*)\n");
+		else if (p->type == LPAREN)
+			printf("Type: LPAREN (\n");
+		else if (p->type == RPAREN)
+			printf("Type: RPAREN )\n");
 		else if (p->type == NULL_TOKEN)
 			printf("Type: NULL_TOKEN\n");
 		else
@@ -81,9 +86,13 @@ tk_print_arr (token* arr, int len)
 		if (arr[i].type == INTEGER)
 			printf("Type: INTEGER, num: %d\n", arr[i].num);
 		else if (arr[i].type == OP_ADD)
-			printf("Type: OP_ADD (+)\n");
+			printf("Type: OP_ADD +\n");
 		else if (arr[i].type == OP_MUL)
-			printf("Type: OP_MUL (*)\n");
+			printf("Type: OP_MUL *\n");
+		else if (arr[i].type == LPAREN)
+			printf("Type: LPAREN (\n");
+		else if (arr[i].type == RPAREN)
+			printf("Type: RPAREN )\n");
 		else if (arr[i].type == NULL_TOKEN)
 			printf("Type: NULL_TOKEN\n");
 		else

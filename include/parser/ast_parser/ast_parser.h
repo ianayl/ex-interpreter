@@ -1,10 +1,12 @@
-#ifndef CST_PARSER_H
-#define CST_PARSER_H
+#ifndef AST_PARSER_H
+#define AST_PARSER_H
 
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
 token* tokens = NULL;
+
+ast_node* epsilon;
 
 int expect(tk_type type);
 

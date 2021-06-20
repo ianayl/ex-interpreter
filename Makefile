@@ -2,14 +2,14 @@ CC = cc
 CFLAGS = -Wall -g
 
 LEXER = lexer/tokens
-CST_PARSER = parser/cst_parser/cst
+CST_PARSER = parser/ast_parser/ast
 
 ROOT = $(shell pwd)
 
 LIBRARIES = $(LEXER) $(CST_PARSER)
 
 build: libraries
-	$(CC) $(CFLAGS) -Iinclude -o arith parser/cst_parser/cst_parser.c libraries/*
+	$(CC) $(CFLAGS) -Iinclude -o arith parser/ast_parser/ast_parser.c libraries/*
 
 libraries:
 	mkdir libraries

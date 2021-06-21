@@ -35,11 +35,27 @@ ast_print_node (ast_node* node)
 }
 
 void
-ast_print_preorder (ast_node* head, int lvl)
+ast_print_preorder (ast_node *head, int lvl)
 {
 	if (!head) return;
+
 	for (int i = 0; i < lvl; i++) printf("    ");
 	ast_print_node(head);
+
 	ast_print_preorder(head->op1, lvl + 1);
 	ast_print_preorder(head->op2, lvl + 1);
+}
+
+ast_node*
+ast_free (ast_node *head)
+{
+	if (!head) return NULL;
+	/* Epsilon is usually a special node; don't delete epsilon */
+	if (head->type == AST_EPSILON) return NULL;
+
+	ast_free(head->op1);
+	ast_free(head->op2);
+	free(head);
+
+	return NULL;
 }

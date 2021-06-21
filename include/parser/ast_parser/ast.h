@@ -23,8 +23,10 @@ typedef struct AST_node {
 
 ast_node* ast_new (ast_type type, ast_node *op1, ast_node *op2, int val);
 
-void ast_print_node (ast_node* node);
+void ast_print_node (ast_node *node);
 
-void ast_print_preorder (ast_node* head, int lvl);
+void ast_print_preorder (ast_node *head, int lvl);
+
+ast_node* ast_free (ast_node *head);
 
 #endif

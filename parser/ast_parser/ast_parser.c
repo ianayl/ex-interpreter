@@ -16,11 +16,12 @@ parse_root (token *head)
 	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0);
 
 	ast_node *res = parse_add();
+	free(epsilon);
+
 	if (!res) {
 		/* TODO raise error: Invalid parse */
 		printf("Error: tree is null\n");
-	} 
-	if (tokens) {
+	} else if (tokens) {
 		/* TODO raise error: Unfinished grammar */
 		printf("Error: tokens left. LEFTOVER TOKENS:\n");
 		tk_print_ll(tokens);
@@ -173,7 +174,7 @@ main ()
 	tk_print_ll(list);
 	ast_node* test = parse_root(list);
 	ast_print_preorder(test, 0);
-
+	test = ast_free(test);
 	// tk_delete_ll(list);
 
 	/* CAUTION:

@@ -10,7 +10,7 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 A basic REPL interpreter that has:
 
 - [x] Basic lexer
-- [ ] A LL(1) Parser
+- [x] A LL(1) Parser
     - [x] Parse basic arithmetic (numbers, `+*()`, etc.)
     - [ ] Parse extended symbols (`-/^!`)
     - [ ] ~~Parse implicit multiplication? (`Expr Expr = Expr '*' Expr`? Will need to figure out how to parse `Expr Expr` anyways)~~

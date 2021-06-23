@@ -1,8 +1,6 @@
-#include "lexer/tokens.h"
+#include "lexer/lexer.h"
 #include <stdlib.h>
 #include <stdio.h>
-
-#define LEXER_BUF_INCR 4
 
 token*
 _lex_new_tk (token *head, tk_type cur_type, char* buf)
@@ -74,16 +72,4 @@ lex (char* src)
 	free(buf);
 
 	return res;
-}
-
-int
-main (int argc, char** argv)
-{
-	if (argc <= 1) {
-		fprintf(stderr, "Error: Nothing to lex.\n");
-		return -1;
-	}
-	token* list = lex(argv[1]);
-	tk_print_ll(list);
-	tk_delete_ll(list);
 }

@@ -1,6 +1,9 @@
 #include "parser/ast_parser/ast_parser.h"
 #include "parser/ast_parser/ast.h"
 
+token* tokens = NULL;
+ast_node* epsilon;
+
 int 
 expect (tk_type type)
 {
@@ -159,55 +162,55 @@ parse_term ()
 	return NULL;
 }
 
-int
-main ()
-{
-	token* list = NULL; 
-	list = tk_append_ll(list, tk_new(INTEGER, 1));
-	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	list = tk_append_ll(list, tk_new(INTEGER, 2));
-	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	list = tk_append_ll(list, tk_new(INTEGER, 3));
-	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	list = tk_append_ll(list, tk_new(INTEGER, 4));
-
-	tk_print_ll(list);
-	ast_node* test = parse_root(list);
-	ast_print_preorder(test, 0);
-	test = ast_free(test);
-	// tk_delete_ll(list);
-
-	/* CAUTION:
-	 *
-	 * 1 + 2 * 3 + 4:
-	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
-	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
-	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
-	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
-	 *
-	 * Expected:
-	 * (1 + (2*3)) + 4
-	 *
-	 * Got:
-	 * 1 + ((2*3) + 4)
-	 *
-	 * 1 * 2 * 3 * 4:
-	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
-	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
-	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
-	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
-	 *
-	 * Expected:
-	 * ((1*2)*3)*4
-	 *
-	 * Got:
-	 * 1*(2*(3*4))
-	 */
-
-}
+// int
+// main ()
+// {
+// 	token* list = NULL; 
+// 	list = tk_append_ll(list, tk_new(INTEGER, 1));
+// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	list = tk_append_ll(list, tk_new(INTEGER, 2));
+// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	list = tk_append_ll(list, tk_new(INTEGER, 3));
+// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	list = tk_append_ll(list, tk_new(INTEGER, 4));
+// 
+// 	tk_print_ll(list);
+// 	ast_node* test = parse_root(list);
+// 	ast_print_preorder(test, 0);
+// 	test = ast_free(test);
+// 	// tk_delete_ll(list);
+// 
+// 	/* CAUTION:
+// 	 *
+// 	 * 1 + 2 * 3 + 4:
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
+// 	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
+// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
+// 	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
+// 	 *
+// 	 * Expected:
+// 	 * (1 + (2*3)) + 4
+// 	 *
+// 	 * Got:
+// 	 * 1 + ((2*3) + 4)
+// 	 *
+// 	 * 1 * 2 * 3 * 4:
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
+// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
+// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
+// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
+// 	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
+// 	 *
+// 	 * Expected:
+// 	 * ((1*2)*3)*4
+// 	 *
+// 	 * Got:
+// 	 * 1*(2*(3*4))
+// 	 */
+// 
+// }

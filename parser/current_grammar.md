@@ -7,8 +7,10 @@ Let's do this parser thing right...
 ```
 <Start> ::= <Add>
 <Add>   ::= <Mul> '+' <Add>
+        | <Mul> '-' <Add>
         | <Mul>
 <Mul>   ::= <Term> '*' <Mul>
+        | <Term> '/' <Mul>
         | <Term>
 <Term>  ::= <Num>
         | '-' <Term>
@@ -20,11 +22,13 @@ Let's do this parser thing right...
 ```
 <Start> ::= <Add>
 <Add>   ::= <Mul> <Add'>
-<Add'>  ::= '+' <Add>
+<Add'>  ::= '+' <Mul> <Add'>
+        | '-' <Mul> <Add'>
         | ε 
 
 <Mul>  ::= <Term> <Mul'>
-<Mul'> ::= '*' <Mul>
+<Mul'> ::= '*' <Term> <Mul'>
+       | '/' <Term> <Mul'>
        | ε
 
 <Term> ::= <Num>

@@ -54,8 +54,12 @@ tk_print_ll (token *head)
 			printf("Type: INTEGER, num: %d\n", p->num);
 		else if (p->type == OP_ADD)
 			printf("Type: OP_ADD (+)\n");
+		else if (p->type == OP_SUB)
+			printf("Type: OP_SUB (-)\n");
 		else if (p->type == OP_MUL)
 			printf("Type: OP_MUL (*)\n");
+		else if (p->type == OP_DIV)
+			printf("Type: OP_DIv (/)\n");
 		else if (p->type == LPAREN)
 			printf("Type: LPAREN (\n");
 		else if (p->type == RPAREN)
@@ -67,6 +71,7 @@ tk_print_ll (token *head)
 	}
 }
 
+/* DEPRECATED - USE LINKED LISTS INSTEAD */
 token*
 tk_ll_to_arr (token *head)
 {
@@ -79,6 +84,7 @@ tk_ll_to_arr (token *head)
 	return res;
 }
 
+/* DEPRECATED - USE LINKED LISTS INSTEAD */
 void
 tk_print_arr (token* arr, int len)
 {

@@ -6,7 +6,7 @@ token*
 _lex_new_tk (token *head, tk_type cur_type, char* buf)
 {
 	if (cur_type == NULL_TOKEN) return head;
-	int num = (cur_type == INTEGER) ? num = atof(buf) : 0;
+	float num = (cur_type == INTEGER) ? num = atof(buf) : 0;
 	return tk_append_ll(head, tk_new(cur_type, num));
 }
 

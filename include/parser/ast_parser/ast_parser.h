@@ -11,6 +11,8 @@ ast_node* parse_add ();
 ast_node* parse_addp ();
 ast_node* parse_mul ();
 ast_node* parse_mulp ();
+ast_node* parse_exp ();
+ast_node* parse_expp ();
 ast_node* parse_term ();
 
 #endif

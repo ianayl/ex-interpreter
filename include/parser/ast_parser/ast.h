@@ -7,11 +7,13 @@
 typedef enum AST_type {
 	AST_NULL,
 	AST_EPSILON,
+	AST_NUM,
 	AST_ADD,
 	AST_SUB,
 	AST_MUL,
 	AST_DIV,
-	AST_NUM,
+	AST_NEG,
+	AST_EXP,
 } ast_type;
 
 typedef struct AST_node {

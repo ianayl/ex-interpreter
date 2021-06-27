@@ -61,6 +61,10 @@ lex (char* src)
 			res = _lex_new_tk(res, cur_type, buf);
 			res = _lex_new_tk(res, OP_DIV, "/");
 			_lex_reset_buf(&cur_type, &buf_len, &buf_pos, &buf);
+		} else if (*src == '^') {
+			res = _lex_new_tk(res, cur_type, buf);
+			res = _lex_new_tk(res, OP_EXP, "^");
+			_lex_reset_buf(&cur_type, &buf_len, &buf_pos, &buf);
 		} else if (*src == '(') {
 			res = _lex_new_tk(res, cur_type, buf);
 			res = _lex_new_tk(res, LPAREN, "(");

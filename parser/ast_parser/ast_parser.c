@@ -137,11 +137,11 @@ parse_addp ()
 ast_node*
 parse_mul ()
 {
-	/* <Mul> ::= <Term> <Mul'> */
-	ast_node *term = parse_term();
-	if (!term) {
+	/* <Mul> ::= <Exp> <Mul'> */
+	ast_node *exp = parse_exp();
+	if (!exp) {
 		/* TODO raise error */
-		printf("Error: parse_term returned null\n");
+		printf("Error: parse_exp returned null\n");
 		return NULL;
 	}
 
@@ -153,27 +153,27 @@ parse_mul ()
 		return NULL;
 
 	/* No multiplication, pass on term */
-	} else if (mulp == epsilon) return term;
+	} else if (mulp == epsilon) return exp;
 
 	/* Handle multiplication */
 	ast_node *successor = _parse_successor(mulp);
-	successor->op1 = term;
+	successor->op1 = exp;
 	return mulp;
 }
 
 ast_node*
 parse_mulp ()
 {
-	/* <Mul'> ::= '*' <Term> <Mul'> */
+	/* <Mul'> ::= '*' <Exp> <Mul'> */
 	if (expect(OP_MUL)) {
 		printf("Info: Expected '*' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node *term = parse_term();
-		if (!term) {
+		ast_node *exp = parse_exp();
+		if (!exp) {
 			/* TODO FREE res */
 			/* TODO raise error */
-			printf("Error: parse_term returned null\n");
+			printf("Error: parse_exp returned null\n");
 			return NULL;
 		}
 
@@ -185,10 +185,10 @@ parse_mulp ()
 			return NULL;
 		}
 
-		if (mulp == epsilon) return ast_new(AST_MUL, NULL, term, 0);
+		if (mulp == epsilon) return ast_new(AST_MUL, NULL, exp, 0);
 		else {
 			ast_node *successor = _parse_successor(mulp);
-			successor->op1 = ast_new(AST_MUL, NULL, term, 0);
+			successor->op1 = ast_new(AST_MUL, NULL, exp, 0);
 			return mulp;
 		}
 
@@ -197,8 +197,8 @@ parse_mulp ()
 		printf("Info: Expected '/' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node *term = parse_term();
-		if (!term) {
+		ast_node *exp = parse_exp();
+		if (!exp) {
 			/* TODO FREE res */
 			/* TODO raise error */
 			printf("Error: parse_term returned null\n");
@@ -213,10 +213,10 @@ parse_mulp ()
 			return NULL;
 		}
 
-		if (mulp == epsilon) return ast_new(AST_DIV, NULL, term, 0);
+		if (mulp == epsilon) return ast_new(AST_DIV, NULL, exp, 0);
 		else {
 			ast_node *successor = _parse_successor(mulp);
-			successor->op1 = ast_new(AST_DIV, NULL, term, 0);
+			successor->op1 = ast_new(AST_DIV, NULL, exp, 0);
 			return mulp;
 		}
 	}
@@ -227,21 +227,97 @@ parse_mulp ()
 }
 
 ast_node*
+parse_exp ()
+{
+	/* <Exp> ::= <Term> <Exp'> */
+	ast_node *term = parse_term();
+	if (!term) {
+		/* TODO raise error */
+		printf("Error: parse_term returned null\n");
+		return NULL;
+	}
+
+	ast_node* expp = parse_expp();
+	if (!expp) {
+		/* TODO FREE term WITH SOME SORT OF FN HERE */
+		/* TODO raise error */
+		printf("Error: parse_expp returned null\n");
+		return NULL;
+
+	/* No exponents, pass on term */
+	} else if (expp == epsilon) return term;
+
+	/* Handle exponents */
+	ast_node *successor = _parse_successor(expp);
+	successor->op1 = term;
+	return expp;
+}
+
+ast_node*
+parse_expp ()
+{
+	/* <Exp'> ::= '^' <Term> <Exp'> */
+	if (expect(OP_EXP)) {
+		printf("Info: Expected '^' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *term = parse_term();
+		if (!term) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_term returned null\n");
+			return NULL;
+		}
+
+		ast_node *expp = parse_expp();
+		if (!expp) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_mulp returned null\n");
+			return NULL;
+		}
+
+		if (expp == epsilon) return ast_new(AST_EXP, NULL, term, 0);
+		else {
+			ast_node *successor = _parse_successor(expp);
+			successor->op1 = ast_new(AST_MUL, NULL, term, 0);
+			return expp;
+		}
+	}
+
+	/* <Exp'> ::= <Epsilon> */
+	printf("Info:  no '^' found, reducing to epsilon\n");
+	return epsilon;
+}
+
+ast_node*
 parse_term ()
 {
 	/* <Term> ::= <Num> */
 	if (expect(INTEGER)) {
 		printf("Info: Num found\n");
-		ast_node* num = ast_new(AST_NUM, NULL, NULL, tokens->num);
+		ast_node *num = ast_new(AST_NUM, NULL, NULL, tokens->num);
 		tokens = tk_pop_ll(tokens);
 		return num;
+
+	/* Term ::= '-' <Term> */
+	} else if (expect(OP_SUB)) {
+		printf("Info: '-' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *term = parse_term();
+		if (!term) {
+			printf("Error: parse_term returned null\n");
+			return NULL;
+		}
+		return ast_new(AST_NEG, term, NULL, 0);
 
 	/* Term ::= '(' <Add> ')' */
 	} else if (expect(LPAREN)) {
 		printf("Info: '(' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node* add = parse_add();
+		ast_node *add = parse_add();
 		if (!add) {
 			printf("Error: parse_add returned null\n");
 			return NULL;
@@ -256,59 +332,6 @@ parse_term ()
 	}
 
 	/* TODO raise error */
-	printf("Error: Expected Num not found\n");
+	printf("Error: No match for <Term> found\n");
 	return NULL;
 }
-
-// int
-// main ()
-// {
-// 	token* list = NULL; 
-// 	list = tk_append_ll(list, tk_new(INTEGER, 1));
-// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	list = tk_append_ll(list, tk_new(INTEGER, 2));
-// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	list = tk_append_ll(list, tk_new(INTEGER, 3));
-// 	list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	list = tk_append_ll(list, tk_new(INTEGER, 4));
-// 
-// 	tk_print_ll(list);
-// 	ast_node* test = parse_root(list);
-// 	ast_print_preorder(test, 0);
-// 	test = ast_free(test);
-// 	// tk_delete_ll(list);
-// 
-// 	/* CAUTION:
-// 	 *
-// 	 * 1 + 2 * 3 + 4:
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
-// 	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
-// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
-// 	 * list = tk_append_ll(list, tk_new(OP_ADD, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
-// 	 *
-// 	 * Expected:
-// 	 * (1 + (2*3)) + 4
-// 	 *
-// 	 * Got:
-// 	 * 1 + ((2*3) + 4)
-// 	 *
-// 	 * 1 * 2 * 3 * 4:
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 1));
-// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 2));
-// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 3));
-// 	 * list = tk_append_ll(list, tk_new(OP_MUL, 0));
-// 	 * list = tk_append_ll(list, tk_new(INTEGER, 4));
-// 	 *
-// 	 * Expected:
-// 	 * ((1*2)*3)*4
-// 	 *
-// 	 * Got:
-// 	 * 1*(2*(3*4))
-// 	 */
-// 
-// }

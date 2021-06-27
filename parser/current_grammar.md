@@ -9,8 +9,10 @@ Let's do this parser thing right...
 <Add>   ::= <Mul> '+' <Add>
         | <Mul> '-' <Add>
         | <Mul>
-<Mul>   ::= <Term> '*' <Mul>
-        | <Term> '/' <Mul>
+<Mul>   ::= <Exp> '*' <Mul>
+        | <Exp> '/' <Mul>
+        | <Exp>
+<Exp>   ::= <Term> '^' <Exp>
         | <Term>
 <Term>  ::= <Num>
         | '-' <Term>
@@ -26,9 +28,13 @@ Let's do this parser thing right...
         | '-' <Mul> <Add'>
         | ε 
 
-<Mul>  ::= <Term> <Mul'>
-<Mul'> ::= '*' <Term> <Mul'>
-       | '/' <Term> <Mul'>
+<Mul>  ::= <Exp> <Mul'>
+<Mul'> ::= '*' <Exp> <Mul'>
+       | '/' <Exp> <Mul'>
+       | ε
+
+<Exp>  ::= <Term> <Exp'>
+<Exp'> ::= '^' <Term> <Exp'>
        | ε
 
 <Term> ::= <Num>

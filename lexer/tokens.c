@@ -53,13 +53,15 @@ tk_print_ll (token *head)
 		if (p->type == INTEGER)
 			printf("Type: INTEGER, num: %f\n", p->num);
 		else if (p->type == OP_ADD)
-			printf("Type: OP_ADD (+)\n");
+			printf("Type: OP_ADD +\n");
 		else if (p->type == OP_SUB)
-			printf("Type: OP_SUB (-)\n");
+			printf("Type: OP_SUB -\n");
 		else if (p->type == OP_MUL)
-			printf("Type: OP_MUL (*)\n");
+			printf("Type: OP_MUL *\n");
 		else if (p->type == OP_DIV)
-			printf("Type: OP_DIV (/)\n");
+			printf("Type: OP_DIV /\n");
+		else if (p->type == OP_EXP)
+			printf("Type: OP_EXP ^\n");
 		else if (p->type == LPAREN)
 			printf("Type: LPAREN (\n");
 		else if (p->type == RPAREN)

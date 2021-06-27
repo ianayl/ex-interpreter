@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "eval/eval.h"
 
 obj*
@@ -20,7 +21,7 @@ eval_ast (ast_node *head)
 		res->num = op1->num + op2->num;
 	} else if (head->type == AST_SUB) {
 		if (!op1 || !op2) {
-			printf("Error: Invalid AST structure for AST_ADD\n");
+			printf("Error: Invalid AST structure for AST_SUB\n");
 			return NULL;
 		}
 		res->num = op1->num - op2->num;
@@ -32,10 +33,22 @@ eval_ast (ast_node *head)
 		res->num = op1->num * op2->num;
 	} else if (head->type == AST_DIV) {
 		if (!op1 || !op2) {
-			printf("Error: Invalid AST structure for AST_MUL\n");
+			printf("Error: Invalid AST structure for AST_DIV\n");
 			return NULL;
 		}
 		res->num = op1->num / op2->num;
+	} else if (head->type == AST_NEG) {
+		if (!op1) {
+			printf("Error: Invalid AST structure for AST_NEG\n");
+			return NULL;
+		}
+		res->num = -1 * op1->num;
+	} else if (head->type == AST_EXP) {
+		if (!op1 || !op2) {
+			printf("Error: Invalid AST structure for AST_EXP\n");
+			return NULL;
+		}
+		res->num = powf(op1->num, op2->num);
 	} else {
 		printf("Error: Invalid ast_type\n");
 		return NULL;

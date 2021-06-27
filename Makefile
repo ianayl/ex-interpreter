@@ -10,7 +10,7 @@ ROOT = $(shell pwd)
 LIBRARIES = $(LEXER) $(PARSER) $(EVAL)
 
 build: libraries
-	$(CC) $(CFLAGS) -Iinclude -o arith main.c libraries/*
+	$(CC) $(CFLAGS) -Iinclude -lm -o arith main.c libraries/*
 
 libraries:
 	mkdir libraries

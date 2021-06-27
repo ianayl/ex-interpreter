@@ -18,6 +18,8 @@ ast_print_node (ast_node* node)
 
 	if (node->type == AST_NULL)
 		printf("AST: Null\n");
+	else if (node->type == AST_NUM)
+		printf("AST: Num: %f\n", node->val);
 	else if (node->type == AST_ADD)
 		printf("AST: Add +\n");
 	else if (node->type == AST_SUB)
@@ -26,8 +28,10 @@ ast_print_node (ast_node* node)
 		printf("AST: Mul *\n");
 	else if (node->type == AST_DIV) 
 		printf("AST: Div /\n");
-	else if (node->type == AST_NUM)
-		printf("AST: Num: %f\n", node->val);
+	else if (node->type == AST_NEG) 
+		printf("AST: Neg -\n");
+	else if (node->type == AST_EXP) 
+		printf("AST: Exp ^\n");
 	else if (node->type == AST_EPSILON)
 		printf("AST: Epsilon (??? how)\n");
 	else

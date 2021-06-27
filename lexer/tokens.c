@@ -59,7 +59,7 @@ tk_print_ll (token *head)
 		else if (p->type == OP_MUL)
 			printf("Type: OP_MUL (*)\n");
 		else if (p->type == OP_DIV)
-			printf("Type: OP_DIv (/)\n");
+			printf("Type: OP_DIV (/)\n");
 		else if (p->type == LPAREN)
 			printf("Type: LPAREN (\n");
 		else if (p->type == RPAREN)

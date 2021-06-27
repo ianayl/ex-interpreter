@@ -12,6 +12,16 @@ expect (tk_type type)
 	return 0;
 }
 
+ast_node*
+_parse_successor (ast_node *head)
+{
+	if (!head) return NULL;
+
+	if (head->op1 == NULL)
+		return head;
+	return _parse_successor(head->op1);
+}
+
 ast_node* 
 parse_root (token *head)
 {
@@ -54,28 +64,44 @@ parse_add ()
 	} else if (addp == epsilon) return mul;
 
 	/* Handle addition */
-	return ast_new(AST_ADD, mul, addp, 0);
+	ast_node *successor = _parse_successor(addp);
+	successor->op1 = mul;
+	return addp;
 }
 
 ast_node*
 parse_addp ()
 {
-	/* <Add'> ::= '+' <Add> */
+	/* <Add'> ::= '+' <Mul> <Add'> */
 	if (expect(OP_ADD)) {
 		printf("Info: Expected '+' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node *res = parse_add(); 
-		if (!res) {
-			printf("Error: parse_add returned null\n");
+		ast_node *mul = parse_mul(); 
+		if (!mul) {
+			printf("Error: parse_term returned null\n");
 			/* TODO FREE res */
 			/* TODO raise error */
 			return NULL;
 		}
-		return res;
+
+		ast_node *addp = parse_addp();
+		if (!addp) {
+			printf("Error: parse_addp returned null\n");
+			/* TODO FREE res */
+			/* TODO raise error */
+			return NULL;
+		}
+
+		if (addp == epsilon) return ast_new(AST_ADD, NULL, mul, 0);
+		else {
+			ast_node *successor = _parse_successor(addp);
+			successor->op1 = ast_new(AST_ADD, NULL, mul, 0);
+			return addp;
+		}
 	}
 
-	/* <Mul'> ::= <Epsilon> */
+	/* <Add'> ::= <Epsilon> */
 	printf("Info: '+' not found, reducing to epsilon\n");
 	return epsilon;
 }
@@ -102,26 +128,44 @@ parse_mul ()
 	} else if (mulp == epsilon) return term;
 
 	/* Handle multiplication */
-	return ast_new(AST_MUL, term, mulp, 0);
+	ast_node *successor = _parse_successor(mulp);
+	successor->op1 = term;
+	return mulp;
 }
 
 ast_node*
 parse_mulp ()
 {
-	/* <Mul'> ::= '*' <Mul> */
+	/* <Mul'> ::= '*' <Term> <Mul'> */
 	if (expect(OP_MUL)) {
 		printf("Info: Expected '*' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node *res = parse_mul();
-		if (!res) {
+		ast_node *term = parse_term();
+		if (!term) {
 			/* TODO FREE res */
 			/* TODO raise error */
-			printf("Error: parse_mul returned null\n");
+			printf("Error: parse_term returned null\n");
 			return NULL;
 		}
-		return res;
+
+		ast_node *mulp = parse_mulp();
+		if (!mulp) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_mulp returned null\n");
+			return NULL;
+		}
+
+		if (mulp == epsilon) return ast_new(AST_MUL, NULL, term, 0);
+		else {
+			ast_node *successor = _parse_successor(mulp);
+			successor->op1 = ast_new(AST_MUL, NULL, term, 0);
+			return mulp;
+		}
 	}
+
+	/* <Mul'> ::= '/' <Term> <Mul'> */
 
 	/* <Mul'> ::= <Epsilon> */
 	printf("Info: '*' not found, reducing to epsilon\n");

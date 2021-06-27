@@ -22,7 +22,7 @@ main (int argc, char** argv)
 
 	printf("==> Evaluation: ------------------------------------------\n");
 	obj *res = eval_ast(test);
-	printf("Evaluated result: %f\n", res->num);
+	if (res) printf("Evaluated result: %f\n", res->num);
 	free(res);
 	test = ast_free(test);
 

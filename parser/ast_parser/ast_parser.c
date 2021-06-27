@@ -99,10 +99,38 @@ parse_addp ()
 			successor->op1 = ast_new(AST_ADD, NULL, mul, 0);
 			return addp;
 		}
+
+	/* <Add'> ::= '-' <Mul> <Add'> */
+	} else if (expect(OP_SUB)) {
+		printf("Info: Expected '-' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *mul = parse_mul(); 
+		if (!mul) {
+			printf("Error: parse_term returned null\n");
+			/* TODO FREE res */
+			/* TODO raise error */
+			return NULL;
+		}
+
+		ast_node *addp = parse_addp();
+		if (!addp) {
+			printf("Error: parse_addp returned null\n");
+			/* TODO FREE res */
+			/* TODO raise error */
+			return NULL;
+		}
+
+		if (addp == epsilon) return ast_new(AST_SUB, NULL, mul, 0);
+		else {
+			ast_node *successor = _parse_successor(addp);
+			successor->op1 = ast_new(AST_SUB, NULL, mul, 0);
+			return addp;
+		}
 	}
 
 	/* <Add'> ::= <Epsilon> */
-	printf("Info: '+' not found, reducing to epsilon\n");
+	printf("Info: no '+', '-' found, reducing to epsilon\n");
 	return epsilon;
 }
 
@@ -163,12 +191,38 @@ parse_mulp ()
 			successor->op1 = ast_new(AST_MUL, NULL, term, 0);
 			return mulp;
 		}
-	}
 
 	/* <Mul'> ::= '/' <Term> <Mul'> */
+	} else if (expect(OP_DIV)) {
+		printf("Info: Expected '/' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *term = parse_term();
+		if (!term) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_term returned null\n");
+			return NULL;
+		}
+
+		ast_node *mulp = parse_mulp();
+		if (!mulp) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_mulp returned null\n");
+			return NULL;
+		}
+
+		if (mulp == epsilon) return ast_new(AST_DIV, NULL, term, 0);
+		else {
+			ast_node *successor = _parse_successor(mulp);
+			successor->op1 = ast_new(AST_DIV, NULL, term, 0);
+			return mulp;
+		}
+	}
 
 	/* <Mul'> ::= <Epsilon> */
-	printf("Info: '*' not found, reducing to epsilon\n");
+	printf("Info:  no '*', '/' found, reducing to epsilon\n");
 	return epsilon;
 }
 

@@ -4,7 +4,7 @@
 #include "lexer/tokens.h"
 
 token* 
-tk_new (tk_type type, int num)
+tk_new (tk_type type, float num)
 {
 	token* res = (token*) malloc(sizeof(token));
 	res->type = type;
@@ -51,7 +51,7 @@ tk_print_ll (token *head)
 {
 	for (token* p = head; p; p = p->next) {
 		if (p->type == INTEGER)
-			printf("Type: INTEGER, num: %d\n", p->num);
+			printf("Type: INTEGER, num: %f\n", p->num);
 		else if (p->type == OP_ADD)
 			printf("Type: OP_ADD (+)\n");
 		else if (p->type == OP_SUB)
@@ -90,7 +90,7 @@ tk_print_arr (token* arr, int len)
 {
 	for (int i = 0; i < len; i++)
 		if (arr[i].type == INTEGER)
-			printf("Type: INTEGER, num: %d\n", arr[i].num);
+			printf("Type: INTEGER, num: %f\n", arr[i].num);
 		else if (arr[i].type == OP_ADD)
 			printf("Type: OP_ADD +\n");
 		else if (arr[i].type == OP_MUL)

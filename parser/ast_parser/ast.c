@@ -1,7 +1,7 @@
 #include "parser/ast_parser/ast.h"
 
 ast_node* 
-ast_new (ast_type type, ast_node *op1, ast_node *op2, int val)
+ast_new (ast_type type, ast_node *op1, ast_node *op2, float val)
 {
 	ast_node *res = (ast_node*) malloc(sizeof(ast_node));
 	res->type = type;
@@ -21,13 +21,13 @@ ast_print_node (ast_node* node)
 	else if (node->type == AST_ADD)
 		printf("AST: Add +\n");
 	else if (node->type == AST_SUB)
-		printf("AST: Sub -'\n");
+		printf("AST: Sub -\n");
 	else if (node->type == AST_MUL)
 		printf("AST: Mul *\n");
 	else if (node->type == AST_DIV) 
 		printf("AST: Div /\n");
 	else if (node->type == AST_NUM)
-		printf("AST: Num: %d\n", node->val);
+		printf("AST: Num: %f\n", node->val);
 	else if (node->type == AST_EPSILON)
 		printf("AST: Epsilon (??? how)\n");
 	else

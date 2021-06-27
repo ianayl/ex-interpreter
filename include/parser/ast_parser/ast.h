@@ -18,10 +18,10 @@ typedef struct AST_node {
 	ast_type type;
 	struct AST_node *op1;
 	struct AST_node *op2;
-	int val;
+	float val;
 } ast_node;
 
-ast_node* ast_new (ast_type type, ast_node *op1, ast_node *op2, int val);
+ast_node* ast_new (ast_type type, ast_node *op1, ast_node *op2, float val);
 
 void ast_print_node (ast_node *node);
 

@@ -14,11 +14,11 @@ typedef enum token_type {
 
 typedef struct token {
 	tk_type type;
-	int num;
+	float num;
 	struct token* next;
 } token;
 
-token* tk_new (tk_type type, int num);
+token* tk_new (tk_type type, float num);
 
 token* tk_append_ll (token *head, token *n);
 

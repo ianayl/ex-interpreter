@@ -6,7 +6,7 @@ token*
 _lex_new_tk (token *head, tk_type cur_type, char* buf)
 {
 	if (cur_type == NULL_TOKEN) return head;
-	int num = (cur_type == INTEGER) ? num = atoi(buf) : 0;
+	int num = (cur_type == INTEGER) ? num = atof(buf) : 0;
 	return tk_append_ll(head, tk_new(cur_type, num));
 }
 
@@ -36,7 +36,7 @@ lex (char* src)
 			buf = (char*) reallocarray(buf, buf_len, sizeof(char));
 		}
 
-		if (*src >= '0' && *src <= '9') {
+		if ((*src >= '0' && *src <= '9') || *src == '.') {
 			if (cur_type == INTEGER) buf[buf_pos++] = *src;
 			else {
 				res = _lex_new_tk(res, cur_type, buf);

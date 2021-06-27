@@ -4,7 +4,7 @@
 #include "parser/ast_parser/ast.h"
 
 typedef struct object {
-	int num;
+	float num;
 } obj;
 
 obj* eval_ast (ast_node *head);

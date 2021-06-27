@@ -32,6 +32,8 @@ ast_print_node (ast_node* node)
 		printf("AST: Neg -\n");
 	else if (node->type == AST_EXP) 
 		printf("AST: Exp ^\n");
+	else if (node->type == AST_MOD) 
+		printf("AST: Mod %%\n");
 	else if (node->type == AST_EPSILON)
 		printf("AST: Epsilon (??? how)\n");
 	else

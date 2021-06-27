@@ -9,6 +9,7 @@ typedef enum token_type {
 	OP_MUL,
 	OP_DIV,
 	OP_EXP,
+	OP_MOD,
 	LPAREN,
 	RPAREN
 } tk_type;

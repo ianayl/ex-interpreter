@@ -31,6 +31,7 @@ Let's do this parser thing right...
 <Mul>  ::= <Exp> <Mul'>
 <Mul'> ::= '*' <Exp> <Mul'>
        | '/' <Exp> <Mul'>
+       | '%' <Exp> <Mul'>
        | ε
 
 <Exp>  ::= <Term> <Exp'>

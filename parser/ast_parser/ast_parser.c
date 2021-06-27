@@ -219,6 +219,34 @@ parse_mulp ()
 			successor->op1 = ast_new(AST_DIV, NULL, exp, 0);
 			return mulp;
 		}
+
+	/* <Mul'> ::= '%' <Term> <Mul'> */
+	} else if (expect(OP_MOD)) {
+		printf("Info: Expected '%%' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *exp = parse_exp();
+		if (!exp) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_term returned null\n");
+			return NULL;
+		}
+
+		ast_node *mulp = parse_mulp();
+		if (!mulp) {
+			/* TODO FREE res */
+			/* TODO raise error */
+			printf("Error: parse_mulp returned null\n");
+			return NULL;
+		}
+
+		if (mulp == epsilon) return ast_new(AST_MOD, NULL, exp, 0);
+		else {
+			ast_node *successor = _parse_successor(mulp);
+			successor->op1 = ast_new(AST_MOD, NULL, exp, 0);
+			return mulp;
+		}
 	}
 
 	/* <Mul'> ::= <Epsilon> */

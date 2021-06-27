@@ -49,6 +49,15 @@ eval_ast (ast_node *head)
 			return NULL;
 		}
 		res->num = powf(op1->num, op2->num);
+
+	/* Can't modulo on floats: TODO write own function
+	 * } else if (head->type == AST_MOD) {
+	 * 	if (!op1 || !op2) {
+	 * 		printf("Error: Invalid AST structure for AST_MOD\n");
+	 * 		return NULL;
+	 * 	}
+	 * 	res->num = op1->num % op2->num;
+	 */
 	} else {
 		printf("Error: Invalid ast_type\n");
 		return NULL;

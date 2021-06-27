@@ -62,6 +62,8 @@ tk_print_ll (token *head)
 			printf("Type: OP_DIV /\n");
 		else if (p->type == OP_EXP)
 			printf("Type: OP_EXP ^\n");
+		else if (p->type == OP_MOD)
+			printf("Type: OP_MOD %%\n");
 		else if (p->type == LPAREN)
 			printf("Type: LPAREN (\n");
 		else if (p->type == RPAREN)

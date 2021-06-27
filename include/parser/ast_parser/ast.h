@@ -14,6 +14,7 @@ typedef enum AST_type {
 	AST_DIV,
 	AST_NEG,
 	AST_EXP,
+	AST_MOD,
 } ast_type;
 
 typedef struct AST_node {

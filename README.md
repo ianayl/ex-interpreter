@@ -6,16 +6,13 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 
 ## Note to self:
 
-- You still need to write the function for modulo
-
 ## Goals:
 A basic REPL interpreter that has:
 
 - [x] Basic lexer
 - [x] A LL(1) Parser
     - [x] Parse basic arithmetic (numbers, `+*()`, etc.)
-    - [ ] Parse extended symbols (`-/^%`)
-    - [ ] ~~Parse implicit multiplication? (`Expr Expr = Expr '*' Expr`? Will need to figure out how to parse `Expr Expr` anyways)~~
+    - [x] Parse extended symbols (`-/^%`)
     - [x] Generates concrete syntax trees
     - [x] Generates abstract syntax trees
 - [x] Evaluates ~~concrete~~ abstract syntax trees

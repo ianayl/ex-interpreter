@@ -11,6 +11,7 @@ Let's do this parser thing right...
         | <Mul>
 <Mul>   ::= <Exp> '*' <Mul>
         | <Exp> '/' <Mul>
+        | <Exp> '%' <Mul>
         | <Exp>
 <Exp>   ::= <Term> '^' <Exp>
         | <Term>

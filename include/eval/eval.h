@@ -3,6 +3,7 @@
 
 #include "parser/ast_parser/ast.h"
 
+/* TODO reconsider putting objects in eval.h as project expands */
 typedef struct object {
 	float num;
 } obj;

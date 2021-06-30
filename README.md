@@ -20,12 +20,25 @@ A basic REPL interpreter that has:
     - [x] Generates concrete syntax trees
     - [x] Generates abstract syntax trees
 - [x] Evaluates ~~concrete~~ abstract syntax trees
-- [ ] Introduce variables
-    - [ ] Hashmaps...
-- [ ] Introduce functions
-    - [ ] More hashmaps...
-- [ ] Introduce more complex data types
-    - [ ] Introduce floats
-    - [ ] Introduce structs?
-    - [ ] Introduct lists
+- [ ] Variables
+    - [x] Implement a hashmap
+    - [ ] Write and parse grammar for variables
+- [ ] Functions
+    - [ ] Introduce function object type
+    - [ ] I _think_ I'm good if I just link AST's to variables
+- [ ] Garbage collector
+    - Screw reference counting we doing bicolored gc (or maybe tricolored...)
+- [ ] Control flows, loops, etc
+    - [ ] Introduce booleans
+    - [ ] Introduce basic boolean expressions
+    - [ ] Introduce if
+    - [ ] Introduce while
+    - [ ] Introduce for
+- [ ] More data types
+    - [ ] Consider: integers and bitwise operations
+        - Also consider: making integers the default data type again
+    - [ ] Introduce structs
+    - [ ] Introduce lists
+    - [ ] Hashmap exists, might as well make a dictionary too
 - [ ] Decent output...?
+    - lol seriously what on earth is the vomit I currently have????

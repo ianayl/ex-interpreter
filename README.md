@@ -6,6 +6,10 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 
 ## Note to self:
 
+- Review `hashmap.c` after implementing garbage collector
+    - **Btw:** consider implementing a garbage collector soon
+    - Be sure to reconsider hashmap's freeing behavior after
+
 ## Goals:
 A basic REPL interpreter that has:
 

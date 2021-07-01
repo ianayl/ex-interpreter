@@ -73,7 +73,7 @@ ast_node*
 parse_addp ()
 {
 	/* <Add'> ::= '+' <Mul> <Add'> */
-	if (expect(OP_ADD)) {
+	if (expect(TOK_ADD)) {
 		printf("Info: Expected '+' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -101,7 +101,7 @@ parse_addp ()
 		}
 
 	/* <Add'> ::= '-' <Mul> <Add'> */
-	} else if (expect(OP_SUB)) {
+	} else if (expect(TOK_SUB)) {
 		printf("Info: Expected '-' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -165,7 +165,7 @@ ast_node*
 parse_mulp ()
 {
 	/* <Mul'> ::= '*' <Exp> <Mul'> */
-	if (expect(OP_MUL)) {
+	if (expect(TOK_MUL)) {
 		printf("Info: Expected '*' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -193,7 +193,7 @@ parse_mulp ()
 		}
 
 	/* <Mul'> ::= '/' <Term> <Mul'> */
-	} else if (expect(OP_DIV)) {
+	} else if (expect(TOK_DIV)) {
 		printf("Info: Expected '/' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -221,7 +221,7 @@ parse_mulp ()
 		}
 
 	/* <Mul'> ::= '%' <Term> <Mul'> */
-	} else if (expect(OP_MOD)) {
+	} else if (expect(TOK_MOD)) {
 		printf("Info: Expected '%%' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -285,7 +285,7 @@ ast_node*
 parse_expp ()
 {
 	/* <Exp'> ::= '^' <Term> <Exp'> */
-	if (expect(OP_EXP)) {
+	if (expect(TOK_EXP)) {
 		printf("Info: Expected '^' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -322,14 +322,14 @@ ast_node*
 parse_term ()
 {
 	/* <Term> ::= <Num> */
-	if (expect(INTEGER)) {
+	if (expect(TOK_NUM)) {
 		printf("Info: Num found\n");
 		ast_node *num = ast_new(AST_NUM, NULL, NULL, tokens->num);
 		tokens = tk_pop_ll(tokens);
 		return num;
 
 	/* Term ::= '-' <Term> */
-	} else if (expect(OP_SUB)) {
+	} else if (expect(TOK_SUB)) {
 		printf("Info: '-' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -341,7 +341,7 @@ parse_term ()
 		return ast_new(AST_NEG, term, NULL, 0);
 
 	/* Term ::= '(' <Add> ')' */
-	} else if (expect(LPAREN)) {
+	} else if (expect(TOK_LPAREN)) {
 		printf("Info: '(' found\n");
 		tokens = tk_pop_ll(tokens);
 
@@ -350,7 +350,7 @@ parse_term ()
 			printf("Error: parse_add returned null\n");
 			return NULL;
 
-		} else if (!expect(RPAREN)) {
+		} else if (!expect(TOK_RPAREN)) {
 			printf("Error: Expected ')'\n");
 			return NULL;
 		}

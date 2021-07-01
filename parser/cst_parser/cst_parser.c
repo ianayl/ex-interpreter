@@ -52,7 +52,7 @@ parse_addp ()
 {
 	/* <Add'> ::= '+' <Add> */
 	cst_node *res = cst_new(CST_ADDP, NULL, NULL, 0);
-	if (expect(OP_ADD)) {
+	if (expect(TOK_ADD)) {
 		printf("Info: Expected '+' found\n");
 		tokens = tk_pop_ll(tokens);
 		res->op1 = parse_add(); 
@@ -93,7 +93,7 @@ cst_node*
 parse_mulp ()
 {
 	cst_node* res = cst_new(CST_MULP, NULL, NULL, 0);
-	if (expect(OP_MUL)) {
+	if (expect(TOK_MUL)) {
 		/* Mul' -> '*' Mul */
 		printf("Info: Expected '*' found\n");
 		tokens = tk_pop_ll(tokens);
@@ -116,13 +116,13 @@ cst_node*
 parse_term ()
 {
 	/* <Term> ::= <Num> */
-	if (expect(INTEGER)) {
+	if (expect(TOK_NUM)) {
 		printf("Info: Num found\n");
 		cst_node* num = cst_new(CST_NUM, NULL, NULL, tokens->num);
 		tokens = tk_pop_ll(tokens);
 		return cst_new(CST_TERM, num, NULL, 0);
 	/* Term ::= '(' <Add> ')' */
-	} else if (expect(LPAREN)) {
+	} else if (expect(TOK_LPAREN)) {
 		printf("Info: '(' found\n");
 		tokens = tk_pop_ll(tokens);
 		cst_node* add = parse_add();
@@ -130,7 +130,7 @@ parse_term ()
 			printf("Error: parse_add returned null\n");
 			return NULL;
 		}
-		if (!expect(RPAREN)) {
+		if (!expect(TOK_RPAREN)) {
 			printf("Error: Expected ')'\n");
 			return NULL;
 		}
@@ -145,17 +145,17 @@ parse_term ()
 int
 main ()
 {
-	token* list = tk_new(LPAREN, 0);
-	tk_append_ll(list, tk_new(INTEGER, 1));
-	tk_append_ll(list, tk_new(OP_ADD, 0));
-	tk_append_ll(list, tk_new(INTEGER, 2));
-	tk_append_ll(list, tk_new(RPAREN, 0));
-	tk_append_ll(list, tk_new(OP_ADD, 0));
-	tk_append_ll(list, tk_new(LPAREN, 0));
-	tk_append_ll(list, tk_new(INTEGER, 3));
-	tk_append_ll(list, tk_new(OP_ADD, 0));
-	tk_append_ll(list, tk_new(INTEGER, 4));
-	tk_append_ll(list, tk_new(RPAREN, 0));
+	token* list = tk_new(TOK_LPAREN, 0);
+	tk_append_ll(list, tk_new(TOK_NUM, 1));
+	tk_append_ll(list, tk_new(TOK_ADD, 0));
+	tk_append_ll(list, tk_new(TOK_NUM, 2));
+	tk_append_ll(list, tk_new(TOK_RPAREN, 0));
+	tk_append_ll(list, tk_new(TOK_ADD, 0));
+	tk_append_ll(list, tk_new(TOK_LPAREN, 0));
+	tk_append_ll(list, tk_new(TOK_NUM, 3));
+	tk_append_ll(list, tk_new(TOK_ADD, 0));
+	tk_append_ll(list, tk_new(TOK_NUM, 4));
+	tk_append_ll(list, tk_new(TOK_RPAREN, 0));
 
 	// token* src = tk_ll_to_arr(list);
 	// int src_len = tk_len_ll(list);

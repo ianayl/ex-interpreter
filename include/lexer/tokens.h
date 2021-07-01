@@ -2,16 +2,18 @@
 #define TOKENS_H
 
 typedef enum token_type {
-	NULL_TOKEN,
-	INTEGER,
-	OP_ADD,
-	OP_SUB,
-	OP_MUL,
-	OP_DIV,
-	OP_EXP,
-	OP_MOD,
-	LPAREN,
-	RPAREN
+	TOK_NULL,
+	TOK_NUM,
+	TOK_IDENIFIER,
+	TOK_ASSIGNMENT,
+	TOK_ADD,
+	TOK_SUB,
+	TOK_MUL,
+	TOK_DIV,
+	TOK_EXP,
+	TOK_MOD,
+	TOK_LPAREN,
+	TOK_RPAREN
 } tk_type;
 
 typedef struct token {

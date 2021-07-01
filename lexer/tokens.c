@@ -1,14 +1,14 @@
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "lexer/tokens.h"
 
 token* 
-tk_new (tk_type type, float num)
+tk_new (tk_type type, float num, char* str)
 {
 	token* res = (token*) malloc(sizeof(token));
 	res->type = type;
-	res->num = num;
+	if (type == TOK_IDENIFIER) {
+		res->str = (char*) calloc(strlen(str) + 1, sizeof(char));
+		strcpy(res->str, str);
+	} else res->num = num;
 	res->next = NULL;
 
 	return res;
@@ -52,6 +52,10 @@ tk_print_ll (token *head)
 	for (token* p = head; p; p = p->next) {
 		if (p->type == TOK_NUM)
 			printf("Type: TOK_NUM, num: %f\n", p->num);
+		else if (p->type == TOK_IDENIFIER)
+			printf("Type: TOK_IDENIFIER, str: %s\n", p->str);
+		else if (p->type == TOK_ASSIGNMENT)
+			printf("Type: TOK_ASSIGNMENT =\n");
 		else if (p->type == TOK_ADD)
 			printf("Type: TOK_ADD +\n");
 		else if (p->type == TOK_SUB)

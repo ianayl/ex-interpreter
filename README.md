@@ -6,6 +6,8 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 
 ## Note to self:
 
+- Forgot to automatically reallocate the hashmap as load factor got to 0.8: Implement that
+
 - Review `hashmap.c` after implementing garbage collector
     - **Btw:** consider implementing a garbage collector soon
     - Be sure to reconsider hashmap's freeing behavior after

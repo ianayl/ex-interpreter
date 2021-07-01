@@ -7,7 +7,7 @@ _lex_new_tk (token *head, tk_type cur_type, char* buf)
 {
 	if (cur_type == TOK_NULL) return head;
 	float num = (cur_type == TOK_NUM) ? num = atof(buf) : 0;
-	return tk_append_ll(head, tk_new(cur_type, num));
+	return tk_append_ll(head, tk_new(cur_type, num, buf));
 }
 
 void
@@ -37,7 +37,8 @@ lex (char* src)
 		}
 
 		if ((*src >= '0' && *src <= '9') || *src == '.') {
-			if (cur_type == TOK_NUM) buf[buf_pos++] = *src;
+			if (cur_type == TOK_NUM || cur_type == TOK_IDENIFIER)
+				buf[buf_pos++] = *src;
 			else {
 				res = _lex_new_tk(res, cur_type, buf);
 				_lex_reset_buf(&cur_type, &buf_len, &buf_pos,
@@ -45,6 +46,20 @@ lex (char* src)
 				cur_type = TOK_NUM;
 				buf[buf_pos++] = *src;
 			}
+		} else if  ((*src >= 'A' && *src <= 'Z') || 
+			    (*src >= 'a' && *src <= 'z')) {
+			if (cur_type == TOK_IDENIFIER) buf[buf_pos++] = *src;
+			else {
+				res = _lex_new_tk(res, cur_type, buf);
+				_lex_reset_buf(&cur_type, &buf_len, &buf_pos,
+					       &buf);
+				cur_type = TOK_IDENIFIER;
+				buf[buf_pos++] = *src;
+			}
+		} else if (*src == '=') {
+			res = _lex_new_tk(res, cur_type, buf);
+			res = _lex_new_tk(res, TOK_ASSIGNMENT, "=");
+			_lex_reset_buf(&cur_type, &buf_len, &buf_pos, &buf);
 		} else if (*src == '+') {
 			res = _lex_new_tk(res, cur_type, buf);
 			res = _lex_new_tk(res, TOK_ADD, "+");

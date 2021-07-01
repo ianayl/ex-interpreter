@@ -1,6 +1,11 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+
 typedef enum token_type {
 	TOK_NULL,
 	TOK_NUM,
@@ -18,11 +23,14 @@ typedef enum token_type {
 
 typedef struct token {
 	tk_type type;
-	float num;
+	union {
+		float num;
+		char* str;
+	};
 	struct token* next;
 } token;
 
-token* tk_new (tk_type type, float num);
+token* tk_new (tk_type type, float num, char* str);
 
 token* tk_append_ll (token *head, token *n);
 

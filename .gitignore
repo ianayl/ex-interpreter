@@ -1,3 +1,4 @@
 arith
 *.o
 libraries/*
+a.out

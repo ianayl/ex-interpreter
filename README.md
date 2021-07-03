@@ -6,8 +6,6 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 
 ## Note to self:
 
-- Forgot to automatically reallocate the hashmap as load factor got to 0.8: Implement that
-
 - Review `hashmap.c` after implementing garbage collector
     - **Btw:** consider implementing a garbage collector soon
     - Be sure to reconsider hashmap's freeing behavior after
@@ -25,11 +23,12 @@ A basic REPL interpreter that has:
 - [ ] Variables
     - [x] Implement a hashmap
     - [ ] Write and parse grammar for variables
+- [ ] Garbage collector
+    - [ ] Reference counting GC maybe?
+    - [ ] Actual, proper bicolored GC (or maybe even tricolored...)
 - [ ] Functions
     - [ ] Introduce function object type
     - [ ] I _think_ I'm good if I just link AST's to variables
-- [ ] Garbage collector
-    - Screw reference counting we doing bicolored gc (or maybe tricolored...)
 - [ ] Control flows, loops, etc
     - [ ] Introduce booleans
     - [ ] Introduce basic boolean expressions

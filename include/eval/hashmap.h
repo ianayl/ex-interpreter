@@ -10,6 +10,9 @@
 #define HM_INITIAL_SIZE 10
 #define HM_EXPAND_FACTOR 2
 
+/* Maximum allowable load factor on the hashmap */
+#define HM_LOAD_THRESHOLD ((long double) 0.8)
+
 #define HM_FNV_OFFSET_BASIS 2166136261
 #define HM_FNV_PRIME 16777619
 
@@ -28,6 +31,7 @@ typedef struct hashmap {
 unsigned long hm_hash();
 hashmap* hm_new();
 hashmap* hm_set(hashmap *src, char* key, obj *val);
+hashmap* hm_clear(hashmap *src);
 obj* hm_get(hashmap *src, char* key);
 void hm_print(hashmap *src);
 

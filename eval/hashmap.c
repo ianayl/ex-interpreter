@@ -69,11 +69,21 @@ hm_set(hashmap *src, char* key, obj *val)
 	unsigned long pos = hm_hash(src, key);
 
 	if (!src->entries[pos]) {
+		/*
+		 * Note: Floating point arithmetic sucks. Eg. sometimes 
+		 * ((7+1)/10) != (0.8) as computations on floats cause minute
+		 * differences that are enough for c to think it's different.
+		 * Hence why > is used here and not >=.
+		 */
+		if ((((long double) (src->occupied + 1)) /
+		    ((long double) src->size)) > HM_LOAD_THRESHOLD) {
+			hashmap *res = hm_expand(src);
+			res = hm_set(res, key, val);
+			src = hm_clear(src);
+			return res;
+		}
 		src->entries[pos] = hm_new_pair(key, val);
 		src->occupied ++;
-		if ((((long double) src->occupied) / ((long double) src->size))
-		    >= ((long double) 0.8))
-			return hm_expand(src);
 		return src;
 	}
 
@@ -89,7 +99,7 @@ hm_set(hashmap *src, char* key, obj *val)
 			 * used instead
 			 */
 			if (p->val != val) {
-				free(p->val);
+				// free(p->val);
 				p->val = val;
 			}
 			return src;
@@ -97,11 +107,16 @@ hm_set(hashmap *src, char* key, obj *val)
 		prev = p;
 	}
 
-	prev->next = hm_new_pair(key, val);
-	src->occupied ++;
-	if ((((long double) src->occupied) / ((long double) src->size))
-	    >= ((long double) 0.8))
-		return hm_expand(src);
+	if ((((long double) src->occupied + 1) /
+	    ((long double) src->size)) > HM_LOAD_THRESHOLD) {
+		hashmap *res = hm_expand(src);
+		res = hm_set(res, key, val);
+		src = hm_clear(src);
+		return res;
+	} else {
+		prev->next = hm_new_pair(key, val);
+		src->occupied ++;
+	}
 	return src;
 }
 
@@ -130,7 +145,7 @@ hm_delete(hashmap *src, char* key)
 	if (!strcmp(src->entries[pos]->key, key)) {
 		hm_entry *next = src->entries[pos]->next;
 		free(src->entries[pos]->key);
-		free(src->entries[pos]->val);
+		// free(src->entries[pos]->val);
 		free(src->entries[pos]);
 		src->entries[pos] = next;
 		src->occupied --;
@@ -142,7 +157,7 @@ hm_delete(hashmap *src, char* key)
 		if (!strcmp(p->key, key)) {
 			prev->next = p->next;
 			free(p->key);
-			free(p->val);
+			// free(p->val);
 			free(p);
 			src->occupied --;
 			return;
@@ -164,7 +179,7 @@ hm_clear(hashmap *src)
 			tmp = src->entries[i];
 			src->entries[i] = src->entries[i]->next;
 			free(tmp->key);
-			free(tmp->val);
+			// free(tmp->val);
 			free(tmp);
 		}
 	}
@@ -183,52 +198,80 @@ hm_print(hashmap *src)
 			printf("(%d)  %s: %f\n", i, p->key, p->val->num);
 }
 
-int
-main()
-{
-	hashmap *tmp = hm_new();
-	obj *asdf = (obj*) malloc(sizeof(obj));
-	asdf->num = 4;
-	tmp = hm_set(tmp, "asdf", asdf);
-	hm_print(tmp);
-	asdf->num = 5;
-	tmp = hm_set(tmp, "asdf", asdf);
-	printf("\n");
-	hm_print(tmp);
-	obj *asdf1 = (obj*) malloc(sizeof(obj));
-	asdf1->num = 7;
-	tmp = hm_set(tmp, "asdf", asdf1);
-	printf("\n");
-	hm_print(tmp);
-	obj *john = (obj*) malloc(sizeof(obj));
-	john->num = 42;
-	obj *a = (obj*) malloc(sizeof(obj));
-	a->num = 231;
-	obj *ptr = (obj*) malloc(sizeof(obj));
-	ptr->num = 9;
-	obj *im = (obj*) malloc(sizeof(obj));
-	im->num = 27;
-	tmp = hm_set(tmp, "john", john);
-	tmp = hm_set(tmp, "ptr", ptr);
-	tmp = hm_set(tmp, "a", a);
-	tmp = hm_set(tmp, "im", im);
-	printf("\n");
-	hm_print(tmp);
-	hm_delete(tmp, "a");
-	printf("\n");
-	hm_print(tmp);
-	hm_delete(tmp, "im");
-	printf("\n");
-	hm_print(tmp);
-	hm_delete(tmp, "im");
-	printf("\n");
-	hm_print(tmp);
-	hashmap *test = hm_expand(tmp);
-	printf("\n");
-	hm_print(test);
-	printf("tmp: %lu/%lu,  test: %lu/%lu\n", tmp->occupied, tmp->size,
-		     			       test->occupied, test->size);
-	tmp = hm_clear(tmp);
-	printf("\n");
-	hm_print(tmp);
-}
+// int
+// main()
+// {
+// 	hashmap *tmp = hm_new();
+// 	obj *asdf = (obj*) malloc(sizeof(obj));
+// 	asdf->num = 4;
+// 	tmp = hm_set(tmp, "asdf", asdf);
+// 	hm_print(tmp);
+// 	asdf->num = 5;
+// 	tmp = hm_set(tmp, "asdf", asdf);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	obj *asdf1 = (obj*) malloc(sizeof(obj));
+// 	asdf1->num = 7;
+// 	tmp = hm_set(tmp, "asdf", asdf1);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	obj *john = (obj*) malloc(sizeof(obj));
+// 	john->num = 42;
+// 	obj *a = (obj*) malloc(sizeof(obj));
+// 	a->num = 231;
+// 	obj *ptr = (obj*) malloc(sizeof(obj));
+// 	ptr->num = 9;
+// 	obj *im = (obj*) malloc(sizeof(obj));
+// 	im->num = 27;
+// 	tmp = hm_set(tmp, "john", john);
+// 	tmp = hm_set(tmp, "ptr", ptr);
+// 	tmp = hm_set(tmp, "a", a);
+// 	tmp = hm_set(tmp, "im", im);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	hm_delete(tmp, "a");
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	hm_delete(tmp, "im");
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	hm_delete(tmp, "im");
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	hashmap *test = hm_expand(tmp);
+// 	printf("\n");
+// 	hm_print(test);
+// 	printf("tmp: %lu/%lu,  test: %lu/%lu\n", tmp->occupied, tmp->size,
+// 		     			       test->occupied, test->size);
+// 	test = hm_clear(test);
+// 	obj *banana = (obj*) malloc(sizeof(obj));
+// 	banana->num = 42;
+// 	obj *apple = (obj*) malloc(sizeof(obj));
+// 	apple->num = 34;
+// 	obj *orange = (obj*) malloc(sizeof(obj));
+// 	orange->num = 98;
+// 	obj *pineapple = (obj*) malloc(sizeof(obj));
+// 	pineapple->num = 288;
+// 	tmp = hm_set(tmp, "banana", banana);
+// 	tmp = hm_set(tmp, "apple", apple);
+// 	tmp = hm_set(tmp, "orange", orange);
+// 	tmp = hm_set(tmp, "pineapple", pineapple);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	printf("tmp: %lu/%lu\n", tmp->occupied, tmp->size);
+// 	obj *passionfruit = (obj*) malloc(sizeof(obj));
+// 	passionfruit->num = 432;
+// 	tmp = hm_set(tmp, "passionfruit", passionfruit);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	printf("tmp: %lu/%lu\n", tmp->occupied, tmp->size);
+// 	obj *kiwi = (obj*) malloc(sizeof(obj));
+// 	kiwi->num = 443;
+// 	tmp = hm_set(tmp, "kiwi", kiwi);
+// 	printf("\n");
+// 	hm_print(tmp);
+// 	printf("tmp: %lu/%lu\n", tmp->occupied, tmp->size);
+// 	tmp = hm_clear(tmp);
+// 	printf("\n");
+// 	hm_print(tmp);
+// }

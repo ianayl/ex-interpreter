@@ -1,25 +1,33 @@
 #include "parser/ast_parser/ast.h"
 
 ast_node* 
-ast_new (ast_type type, ast_node *op1, ast_node *op2, float val)
+ast_new(ast_type type, ast_node *op1, ast_node *op2, float num, char* str)
 {
 	ast_node *res = (ast_node*) malloc(sizeof(ast_node));
 	res->type = type;
 	res->op1 = op1;
 	res->op2 = op2;
-	res->val = val;
+	if (type == AST_IDENTIFIER) {
+		/* TODO I don't actually know if the calloc is needed here */
+		res->str = (char*) calloc(strlen(str) + 1, sizeof(char));
+		strcpy(res->str, str);
+	} else res->num = num;
 	return res;
 }
 
 void
-ast_print_node (ast_node* node)
+ast_print_node(ast_node* node)
 {
 	if (!node) return;
 
 	if (node->type == AST_NULL)
 		printf("AST: Null\n");
 	else if (node->type == AST_NUM)
-		printf("AST: Num: %f\n", node->val);
+		printf("AST: Num: %f\n", node->num);
+	else if (node->type == AST_IDENTIFIER)
+		printf("AST: Num: %s\n", node->str);
+	else if (node->type == AST_ASSIGNMENT)
+		printf("AST: Assignment =\n");
 	else if (node->type == AST_ADD)
 		printf("AST: Add +\n");
 	else if (node->type == AST_SUB)
@@ -41,7 +49,7 @@ ast_print_node (ast_node* node)
 }
 
 void
-ast_print_preorder (ast_node *head, int lvl)
+ast_print_preorder(ast_node *head, int lvl)
 {
 	if (!head) return;
 
@@ -53,7 +61,7 @@ ast_print_preorder (ast_node *head, int lvl)
 }
 
 ast_node*
-ast_free (ast_node *head)
+ast_free(ast_node *head)
 {
 	if (!head) return NULL;
 	/* Epsilon is usually a special node; don't delete epsilon */
@@ -61,6 +69,7 @@ ast_free (ast_node *head)
 
 	ast_free(head->op1);
 	ast_free(head->op2);
+	if (head->type == AST_IDENTIFIER) free(head->str);
 	free(head);
 
 	return NULL;

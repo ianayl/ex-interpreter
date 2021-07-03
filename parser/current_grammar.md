@@ -5,7 +5,9 @@ Let's do this parser thing right...
 ## Current grammar of the language:
 
 ```
-<Start> ::= <Add>
+<Start> ::= <Expr>
+<Expr>  ::= <Identifier> '=' <Add>
+        | <Add>
 <Add>   ::= <Mul> '+' <Add>
         | <Mul> '-' <Add>
         | <Mul>
@@ -16,6 +18,7 @@ Let's do this parser thing right...
 <Exp>   ::= <Term> '^' <Exp>
         | <Term>
 <Term>  ::= <Num>
+        | <Identifier>
         | '-' <Term>
         | '(' <Add> ')'
 ```
@@ -23,7 +26,10 @@ Let's do this parser thing right...
 ## Left refactored for `LL(1)`:
 
 ```
-<Start> ::= <Add>
+<Start> ::= <Expr>
+<Expr>  ::= <Identifier> '=' <Add>
+        | <Add>
+
 <Add>   ::= <Mul> <Add'>
 <Add'>  ::= '+' <Mul> <Add'>
         | '-' <Mul> <Add'>
@@ -40,6 +46,7 @@ Let's do this parser thing right...
        | ε
 
 <Term> ::= <Num>
+       | <Identifier>
        | '-' <Term>
        | '(' <Add> ')'
 ```

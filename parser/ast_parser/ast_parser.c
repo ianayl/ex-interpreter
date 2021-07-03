@@ -1,11 +1,12 @@
 #include "parser/ast_parser/ast_parser.h"
+#include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
 token* tokens = NULL;
 ast_node* epsilon;
 
 int 
-expect (tk_type type)
+expect(tk_type type)
 {
 	/* if (tokens->next && tokens->next->type == type) return 1; */
 	if (tokens && tokens->type == type) return 1;
@@ -13,7 +14,7 @@ expect (tk_type type)
 }
 
 ast_node*
-_parse_successor (ast_node *head)
+_parse_successor(ast_node *head)
 {
 	if (!head) return NULL;
 
@@ -23,10 +24,10 @@ _parse_successor (ast_node *head)
 }
 
 ast_node* 
-parse_root (token *head)
+parse_root(token *head)
 {
 	tokens = head;
-	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0);
+	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0, "");
 
 	ast_node *res = parse_add();
 	free(epsilon);
@@ -43,7 +44,16 @@ parse_root (token *head)
 }
 
 ast_node*
-parse_add ()
+parse_expr()
+{
+	if (expect(TOK_IDENIFIER)) {
+		printf("Info: Expected identifier found\n");
+	}
+	return NULL;
+}
+
+ast_node*
+parse_add()
 {
 	/* <Add> ::= <Mul> <Add'> */
 	ast_node *mul = parse_mul();
@@ -70,7 +80,7 @@ parse_add ()
 }
 
 ast_node*
-parse_addp ()
+parse_addp()
 {
 	/* <Add'> ::= '+' <Mul> <Add'> */
 	if (expect(TOK_ADD)) {
@@ -93,10 +103,10 @@ parse_addp ()
 			return NULL;
 		}
 
-		if (addp == epsilon) return ast_new(AST_ADD, NULL, mul, 0);
+		if (addp == epsilon) return ast_new(AST_ADD, NULL, mul, 0, "");
 		else {
 			ast_node *successor = _parse_successor(addp);
-			successor->op1 = ast_new(AST_ADD, NULL, mul, 0);
+			successor->op1 = ast_new(AST_ADD, NULL, mul, 0, "");
 			return addp;
 		}
 
@@ -121,10 +131,10 @@ parse_addp ()
 			return NULL;
 		}
 
-		if (addp == epsilon) return ast_new(AST_SUB, NULL, mul, 0);
+		if (addp == epsilon) return ast_new(AST_SUB, NULL, mul, 0, "");
 		else {
 			ast_node *successor = _parse_successor(addp);
-			successor->op1 = ast_new(AST_SUB, NULL, mul, 0);
+			successor->op1 = ast_new(AST_SUB, NULL, mul, 0, "");
 			return addp;
 		}
 	}
@@ -135,7 +145,7 @@ parse_addp ()
 }
 
 ast_node*
-parse_mul ()
+parse_mul()
 {
 	/* <Mul> ::= <Exp> <Mul'> */
 	ast_node *exp = parse_exp();
@@ -162,7 +172,7 @@ parse_mul ()
 }
 
 ast_node*
-parse_mulp ()
+parse_mulp()
 {
 	/* <Mul'> ::= '*' <Exp> <Mul'> */
 	if (expect(TOK_MUL)) {
@@ -185,10 +195,10 @@ parse_mulp ()
 			return NULL;
 		}
 
-		if (mulp == epsilon) return ast_new(AST_MUL, NULL, exp, 0);
+		if (mulp == epsilon) return ast_new(AST_MUL, NULL, exp, 0, "");
 		else {
 			ast_node *successor = _parse_successor(mulp);
-			successor->op1 = ast_new(AST_MUL, NULL, exp, 0);
+			successor->op1 = ast_new(AST_MUL, NULL, exp, 0, "");
 			return mulp;
 		}
 
@@ -213,10 +223,10 @@ parse_mulp ()
 			return NULL;
 		}
 
-		if (mulp == epsilon) return ast_new(AST_DIV, NULL, exp, 0);
+		if (mulp == epsilon) return ast_new(AST_DIV, NULL, exp, 0, "");
 		else {
 			ast_node *successor = _parse_successor(mulp);
-			successor->op1 = ast_new(AST_DIV, NULL, exp, 0);
+			successor->op1 = ast_new(AST_DIV, NULL, exp, 0, "");
 			return mulp;
 		}
 
@@ -241,10 +251,10 @@ parse_mulp ()
 			return NULL;
 		}
 
-		if (mulp == epsilon) return ast_new(AST_MOD, NULL, exp, 0);
+		if (mulp == epsilon) return ast_new(AST_MOD, NULL, exp, 0, "");
 		else {
 			ast_node *successor = _parse_successor(mulp);
-			successor->op1 = ast_new(AST_MOD, NULL, exp, 0);
+			successor->op1 = ast_new(AST_MOD, NULL, exp, 0, "");
 			return mulp;
 		}
 	}
@@ -255,7 +265,7 @@ parse_mulp ()
 }
 
 ast_node*
-parse_exp ()
+parse_exp()
 {
 	/* <Exp> ::= <Term> <Exp'> */
 	ast_node *term = parse_term();
@@ -282,7 +292,7 @@ parse_exp ()
 }
 
 ast_node*
-parse_expp ()
+parse_expp()
 {
 	/* <Exp'> ::= '^' <Term> <Exp'> */
 	if (expect(TOK_EXP)) {
@@ -305,10 +315,10 @@ parse_expp ()
 			return NULL;
 		}
 
-		if (expp == epsilon) return ast_new(AST_EXP, NULL, term, 0);
+		if (expp == epsilon) return ast_new(AST_EXP, NULL, term, 0, "");
 		else {
 			ast_node *successor = _parse_successor(expp);
-			successor->op1 = ast_new(AST_MUL, NULL, term, 0);
+			successor->op1 = ast_new(AST_MUL, NULL, term, 0, "");
 			return expp;
 		}
 	}
@@ -319,12 +329,12 @@ parse_expp ()
 }
 
 ast_node*
-parse_term ()
+parse_term()
 {
 	/* <Term> ::= <Num> */
 	if (expect(TOK_NUM)) {
 		printf("Info: Num found\n");
-		ast_node *num = ast_new(AST_NUM, NULL, NULL, tokens->num);
+		ast_node *num = ast_new(AST_NUM, NULL, NULL, tokens->num, "");
 		tokens = tk_pop_ll(tokens);
 		return num;
 
@@ -338,7 +348,7 @@ parse_term ()
 			printf("Error: parse_term returned null\n");
 			return NULL;
 		}
-		return ast_new(AST_NEG, term, NULL, 0);
+		return ast_new(AST_NEG, term, NULL, 0, "");
 
 	/* Term ::= '(' <Add> ')' */
 	} else if (expect(TOK_LPAREN)) {

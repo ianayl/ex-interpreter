@@ -12,7 +12,7 @@ eval_ast (ast_node *head)
 	obj *res = (obj*) malloc(sizeof(obj));
 
 	if (head->type == AST_NUM)
-		res->num = head->val;
+		res->num = head->num;
 	else if (head->type == AST_ADD) {
 		if (!op1 || !op2) {
 			printf("Error: Invalid AST structure for AST_ADD\n");

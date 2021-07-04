@@ -29,7 +29,7 @@ parse_root(token *head)
 	tokens = head;
 	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0, "");
 
-	ast_node *res = parse_add();
+	ast_node *res = parse_expr();
 	free(epsilon);
 
 	if (!res) {
@@ -46,10 +46,43 @@ parse_root(token *head)
 ast_node*
 parse_expr()
 {
+	/* <Expr> ::= <Identifier> '=' <Add> */
 	if (expect(TOK_IDENIFIER)) {
 		printf("Info: Expected identifier found\n");
+		ast_node *identifier = ast_new(AST_IDENTIFIER, NULL, NULL, 0,
+					       tokens->str);
+		tokens = tk_pop_ll(tokens);
+		
+		if (!expect(TOK_ASSIGNMENT)) {
+			printf("Error: Cannot find =\n");
+			/* TODO FREE res */
+			/* TODO raise error */
+			return NULL;
+		}
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *add = parse_add();
+		if (!add) {
+			/* TODO FREE mul WITH SOME SORT OF FN HERE */
+			/* TODO raise error */
+			printf("Error: parse_add returned null\n");
+			return NULL;
+		}
+
+		ast_node *res = ast_new(AST_ASSIGNMENT, identifier, add, 0, "");
+		return res;
 	}
-	return NULL;
+	
+	/* <Expr> ::= <Add> */
+	printf("Info: No identifier found, reducing to Add\n");
+	ast_node *add = parse_add();
+	if (!add) {
+		/* TODO FREE mul WITH SOME SORT OF FN HERE */
+		/* TODO raise error */
+		printf("Error: parse_add returned null\n");
+		return NULL;
+	}
+	return add;
 }
 
 ast_node*

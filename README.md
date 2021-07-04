@@ -10,6 +10,8 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
     - **Btw:** consider implementing a garbage collector soon
     - Be sure to reconsider hashmap's freeing behavior after
 
+- RECONSIDER the grammar for assignments to make it work as in C instead
+
 ## Goals:
 A basic REPL interpreter that has:
 

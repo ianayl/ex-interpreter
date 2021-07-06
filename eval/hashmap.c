@@ -1,6 +1,7 @@
-#include "eval/hashmap.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include "eval/hashmap.h"
 
 unsigned long
 hm_hash(hashmap *src, char* key)
@@ -17,12 +18,12 @@ hm_hash(hashmap *src, char* key)
 }
 
 hashmap*
-hm_new()
+hm_new(unsigned long initial_size)
 {
 	hashmap *res = (hashmap*) malloc(sizeof(hashmap));
 	/* Hopefully calloc initializes everything to NULL? */
-	res->entries = (hm_entry**) calloc(HM_INITIAL_SIZE, sizeof(hm_entry*));
-	res->size = HM_INITIAL_SIZE;
+	res->entries = (hm_entry**) calloc(initial_size, sizeof(hm_entry*));
+	res->size = initial_size;
 	res->occupied = 0;
 	return res;
 }

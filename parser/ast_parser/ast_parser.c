@@ -40,6 +40,7 @@ parse_root(token *head)
 		printf("Error: tokens left. LEFTOVER TOKENS:\n");
 		tk_print_ll(tokens);
 	}
+	tk_print_ll(tokens);
 	return res;
 }
 

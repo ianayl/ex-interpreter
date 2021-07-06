@@ -1,13 +1,10 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-/* TODO reconsider putting objects in eval.h as project expands */
-#include <stdlib.h>
-#include <string.h>
-#include "eval/eval.h"
+#include "eval/object.h"
 
 /* TODO definitely up this later */
-#define HM_INITIAL_SIZE 10
+#define HM_INITIAL_SIZE 100
 #define HM_EXPAND_FACTOR 2
 
 /* Maximum allowable load factor on the hashmap */
@@ -29,7 +26,7 @@ typedef struct hashmap {
 } hashmap;
 
 unsigned long hm_hash();
-hashmap* hm_new();
+hashmap* hm_new(unsigned long initial_size);
 hashmap* hm_set(hashmap *src, char* key, obj *val);
 hashmap* hm_clear(hashmap *src);
 obj* hm_get(hashmap *src, char* key);

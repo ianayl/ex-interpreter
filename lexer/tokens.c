@@ -120,6 +120,7 @@ tk_pop_ll (token* head)
 	if (!head)
 		return NULL;
 	token* res = head->next;
+	if (head->type == TOK_IDENIFIER) free(head->str);
 	free(head);
 	return res;
 }

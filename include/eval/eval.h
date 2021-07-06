@@ -2,12 +2,9 @@
 #define EVAL_H
 
 #include "parser/ast_parser/ast.h"
+#include "eval/object.h"
+#include "eval/hashmap.h"
 
-/* TODO reconsider putting objects in eval.h as project expands */
-typedef struct object {
-	float num;
-} obj;
-
-obj* eval_ast (ast_node *head);
+obj* eval_ast (hashmap *heap, ast_node *head);
 
 #endif

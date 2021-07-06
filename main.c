@@ -1,3 +1,5 @@
+#include "eval/hashmap.h"
+#include "eval/object.h"
 #include "lexer/lexer.h"
 #include "parser/ast_parser/ast_parser.h"
 #include "eval/eval.h"
@@ -21,10 +23,15 @@ main (int argc, char** argv)
 	ast_print_preorder(test, 0);
 
 	printf("==> Evaluation: ------------------------------------------\n");
-	obj *res = eval_ast(test);
-	if (res) printf("Evaluated result: %f\n", res->num);
-	free(res);
+	hashmap *heap = hm_new(HM_INITIAL_SIZE);
+	obj *res = eval_ast(heap, test);
+	printf("Evaluated result: ");
+	obj_print(res);
+	res = obj_delete(res);
+	printf("Heap dump:\n");
+	hm_print(heap);
 	test = ast_free(test);
+	heap = hm_clear(heap);
 
 	printf("==> End. --------------------------------------------------\n");
 }

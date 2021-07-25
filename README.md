@@ -25,13 +25,17 @@ A basic REPL interpreter that has:
 - [ ] Variables
     - [x] Implement a hashmap
     - [x] Write and parse grammar for variables
+- [ ] Interaction
+    - [x] Add an interactive shell mode
     - [ ] Add ability to read from file
+- [ ] Functions
+    - [ ] Introduce function object type: A list of AST's basically
+    - [ ] Introduce scoping 
+        - [ ] "Scopes" via a parent pointer tree of activation records (each containing it's own heap)
+        - [ ] Associating each function call (scope/activation record) with it's own activation record in the parent-pointer tree
 - [ ] Garbage collector
     - [ ] Reference counting GC maybe?
     - [ ] Actual, proper bicolored GC (or maybe even tricolored...)
-- [ ] Functions
-    - [ ] Introduce function object type
-    - [ ] I _think_ I'm good if I just link AST's to variables
 - [ ] Control flows, loops, etc
     - [ ] Introduce booleans
     - [ ] Introduce basic boolean expressions

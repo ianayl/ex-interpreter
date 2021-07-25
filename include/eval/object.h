@@ -4,18 +4,18 @@
 typedef enum object_type {
 	OBJ_NULL,
 	OBJ_NUM,
-	OBJ_IDENIFIER,
+	OBJ_IDENTIFIER,
 } obj_type;
 
 typedef struct object {
 	obj_type type;
 	union {
 		float num;
-		char* str;
+		char* identifier;
 	};
 } obj;
 
-obj* obj_new(obj_type type, float num, char* str);
+obj* obj_new(obj_type type, float num, char* identifier);
 obj* obj_delete(obj *src);
 void obj_print(obj *src);
 

@@ -24,12 +24,13 @@ eval_ast (hashmap *heap, ast_node *head)
 		res->num = head->num;
 
 	} else if (head->type == AST_IDENTIFIER) {
-		res->type = OBJ_IDENIFIER;
-		res->str = (char*) calloc(strlen(head->str) + 1, sizeof(char));
-		strcpy(res->str, head->str);
+		res->type = OBJ_IDENTIFIER;
+		res->identifier = (char*) calloc(strlen(head->str) + 1,
+						 sizeof(char));
+		strcpy(res->identifier, head->str);
 
 	} else if (head->type == AST_ASSIGNMENT) {
-		if (!op1 || !op2 || op1->type != OBJ_IDENIFIER) {
+		if (!op1 || !op2 || op1->type != OBJ_IDENTIFIER) {
 			printf("Error: Invalid AST structure for \
 				AST_ASSIGNMENT\n");
 			free(res);
@@ -37,7 +38,22 @@ eval_ast (hashmap *heap, ast_node *head)
 			op2 = obj_delete(op2);
 			return NULL;
 		}
-		heap = hm_set(heap, op1->str, op2);
+
+		/* 
+		 * If wanted node is an identifier give back a copy of the
+		 * referenced value; basically passing by value
+		 */
+		obj *copy;
+		if (op2->type == OBJ_IDENTIFIER) {
+			/* TODO this is scuffed pls make less scuffed */
+			copy = (obj*) malloc(sizeof(obj));
+			obj *orig = hm_get(heap, op1->identifier);
+			copy->type = orig->type;
+			copy->identifier = orig->identifier;
+			copy->num = orig->num;
+		} else copy = op2;
+
+		heap = hm_set(heap, op1->identifier, copy);
 		res->type = OBJ_NULL;
 		obj_delete(op1);
 		return res;
@@ -51,7 +67,18 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = op1->num + op2->num;
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		printf("OP1 RESULT: %f  OP2 RESULT: %f\n", op1_num, op2_num);
+
+		res->num = op1_num + op2_num;
 
 	} else if (head->type == AST_SUB) {
 		if (!op1 || !op2) {
@@ -62,7 +89,16 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = op1->num - op2->num;
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		res->num = op1_num - op2_num;
 
 	} else if (head->type == AST_MUL) {
 		if (!op1 || !op2) {
@@ -73,7 +109,16 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = op1->num * op2->num;
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		res->num = op1_num * op2_num;
 
 	} else if (head->type == AST_DIV) {
 		if (!op1 || !op2) {
@@ -84,7 +129,16 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = op1->num / op2->num;
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		res->num = op1_num / op2_num;
 
 	} else if (head->type == AST_NEG) {
 		if (!op1) {
@@ -95,7 +149,13 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = -1 * op1->num;
+
+		float op1_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+
+		res->num = -1 * op1_num;
 
 	} else if (head->type == AST_EXP) {
 		if (!op1 || !op2) {
@@ -106,7 +166,16 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = powf(op1->num, op2->num);
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		res->num = powf(op1_num, op2_num);
 
 	} else if (head->type == AST_MOD) {
 		if (!op1 || !op2) {
@@ -117,7 +186,16 @@ eval_ast (hashmap *heap, ast_node *head)
 			return NULL;
 		}
 		res->type = OBJ_NUM;
-		res->num = fmod(op1->num, op2->num);
+
+		float op1_num, op2_num;
+		if (op1->type == OBJ_IDENTIFIER) {
+			op1_num = hm_get(heap, op1->identifier)->num;
+		} else op1_num = op1->num;
+		if (op2->type == OBJ_IDENTIFIER) {
+			op2_num = hm_get(heap, op2->identifier)->num;
+		} else op2_num = op2->num;
+
+		res->num = fmod(op1_num, op2_num);
 	
 	} else {
 		printf("Error: Invalid ast_type\n");

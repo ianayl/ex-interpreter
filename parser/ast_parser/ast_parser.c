@@ -47,34 +47,41 @@ parse_root(token *head)
 ast_node*
 parse_expr()
 {
-	/* <Expr> ::= <Identifier> '=' <Add> */
+	/* <Expr> ::= <Assign> */
+	printf("Info: No 'return' found, reducing to Assign\n");
+	ast_node *assign = parse_assign();
+	if (!assign) {
+		/* TODO FREE mul WITH SOME SORT OF FN HERE */
+		/* TODO raise error */
+		printf("Error: parse_assign returned null\n");
+		return NULL;
+	}
+	return assign;
+}
+
+ast_node*
+parse_assign()
+{
+	/* <Assign> ::= <Identifier> <Assign'> */
 	if (expect(TOK_IDENIFIER)) {
 		printf("Info: Expected identifier found\n");
 		ast_node *identifier = ast_new(AST_IDENTIFIER, NULL, NULL, 0,
 					       tokens->str);
 		tokens = tk_pop_ll(tokens);
-		
-		if (!expect(TOK_ASSIGNMENT)) {
-			printf("Error: Cannot find =\n");
-			/* TODO FREE res */
-			/* TODO raise error */
-			return NULL;
-		}
-		tokens = tk_pop_ll(tokens);
 
-		ast_node *add = parse_add();
-		if (!add) {
+		ast_node *assignp = parse_assignp();
+		if (!assignp) {
 			/* TODO FREE mul WITH SOME SORT OF FN HERE */
 			/* TODO raise error */
-			printf("Error: parse_add returned null\n");
+			printf("Error: parse_assignp returned null\n");
 			return NULL;
-		}
+		} else if (assignp == epsilon) return identifier;
 
-		ast_node *res = ast_new(AST_ASSIGNMENT, identifier, add, 0, "");
-		return res;
+		assignp->op1 = identifier;
+		return assignp;
 	}
-	
-	/* <Expr> ::= <Add> */
+
+	/* <Assign> ::= <Add> */
 	printf("Info: No identifier found, reducing to Add\n");
 	ast_node *add = parse_add();
 	if (!add) {
@@ -84,6 +91,30 @@ parse_expr()
 		return NULL;
 	}
 	return add;
+}
+
+ast_node*
+parse_assignp()
+{
+	/* <Assign'> ::= '=' <Add> */
+	if (expect(TOK_ASSIGNMENT)) {
+		printf("Info: Expected '=' found\n");
+		tokens = tk_pop_ll(tokens);
+
+		ast_node *add = parse_add(); 
+		if (!add) {
+			printf("Error: parse_add returned null\n");
+			/* TODO FREE res */
+			/* TODO raise error */
+			return NULL;
+		}
+
+		return ast_new(AST_ASSIGNMENT, NULL, add, 0, "");
+	}
+
+	/* <Assign'> ::= <Epsilon> */
+	printf("Info: no '=' found, reducing to epsilon\n");
+	return epsilon;
 }
 
 ast_node*
@@ -371,6 +402,13 @@ parse_term()
 		ast_node *num = ast_new(AST_NUM, NULL, NULL, tokens->num, "");
 		tokens = tk_pop_ll(tokens);
 		return num;
+
+	} else if (expect(TOK_IDENIFIER)) {
+		printf("Info: Identifier found\n");
+		ast_node *identifier = ast_new(AST_IDENTIFIER, NULL, NULL, 0,
+					       tokens->str);
+		tokens = tk_pop_ll(tokens);
+		return identifier;
 
 	/* Term ::= '-' <Term> */
 	} else if (expect(TOK_SUB)) {

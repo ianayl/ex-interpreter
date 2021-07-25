@@ -24,7 +24,8 @@ A basic REPL interpreter that has:
 - [x] Evaluates ~~concrete~~ abstract syntax trees
 - [ ] Variables
     - [x] Implement a hashmap
-    - [ ] Write and parse grammar for variables
+    - [x] Write and parse grammar for variables
+    - [ ] Add ability to read from file
 - [ ] Garbage collector
     - [ ] Reference counting GC maybe?
     - [ ] Actual, proper bicolored GC (or maybe even tricolored...)

@@ -25,7 +25,7 @@ ast_print_node(ast_node* node)
 	else if (node->type == AST_NUM)
 		printf("AST: Num: %f\n", node->num);
 	else if (node->type == AST_IDENTIFIER)
-		printf("AST: Num: %s\n", node->str);
+		printf("AST: Identifier: %s\n", node->str);
 	else if (node->type == AST_ASSIGNMENT)
 		printf("AST: Assignment =\n");
 	else if (node->type == AST_ADD)

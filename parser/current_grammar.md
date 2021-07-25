@@ -7,6 +7,7 @@ Let's do this parser thing right...
 ```
 <Start> ::= <Expr>
 <Expr>  ::= <Identifier> '=' <Add>
+        | 'return' <Add>
         | <Add>
 <Add>   ::= <Mul> '+' <Add>
         | <Mul> '-' <Add>
@@ -26,27 +27,33 @@ Let's do this parser thing right...
 ## Left refactored for `LL(1)`:
 
 ```
-<Start> ::= <Expr>
-<Expr>  ::= <Identifier> '=' <Add>
-        | <Add>
+<Start>   ::= <Expr>
+<Expr>    ::= 'return' <Assign>
+          | <Assign>
 
-<Add>   ::= <Mul> <Add'>
-<Add'>  ::= '+' <Mul> <Add'>
-        | '-' <Mul> <Add'>
-        | ε 
+<Assign>  ::= <Identifier> <Assign'>
+          | <Add>
+<Assign'> ::= '=' <Add>
+          | ε
 
-<Mul>  ::= <Exp> <Mul'>
-<Mul'> ::= '*' <Exp> <Mul'>
-       | '/' <Exp> <Mul'>
-       | '%' <Exp> <Mul'>
-       | ε
+<Add>     ::= <Mul> <Add'>
+<Add'>    ::= '+' <Mul> <Add'>
+          | '-' <Mul> <Add'>
+          | ε 
 
-<Exp>  ::= <Term> <Exp'>
-<Exp'> ::= '^' <Term> <Exp'>
-       | ε
+<Mul>     ::= <Exp> <Mul'>
+<Mul'>    ::= '*' <Exp> <Mul'>
+          | '/' <Exp> <Mul'>
+          | '%' <Exp> <Mul'>
+          | ε
 
-<Term> ::= <Num>
-       | <Identifier>
-       | '-' <Term>
-       | '(' <Add> ')'
+<Exp>     ::= <Term> <Exp'>
+<Exp'>    ::= '^' <Term> <Exp'>
+          | ε
+
+<Term>    ::= <Num>
+          | <Identifier>
+          | '-' <Term>
+          | '(' <Assign> ')'
 ```
+

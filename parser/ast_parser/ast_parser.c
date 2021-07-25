@@ -77,7 +77,8 @@ parse_assign()
 			return NULL;
 		} else if (assignp == epsilon) return identifier;
 
-		assignp->op1 = identifier;
+		ast_node *successor = _parse_successor(assignp);
+		successor->op1 = identifier;
 		return assignp;
 	}
 
@@ -96,6 +97,41 @@ parse_assign()
 ast_node*
 parse_assignp()
 {
+	/* TODO the following 3 derivations are SCUFFED; fix the grammar */
+
+	/* <Assign'> ::= <Add'> */
+	ast_node *addp = parse_addp();
+	if (!addp) {
+		/* TODO raise error */
+		printf("Error: parse_addp returned null\n");
+		return NULL;
+	} else if (addp != epsilon) {
+		printf("Info: Expected <Add'> found\n");
+		return addp;
+	}
+
+	/* <Assign'> ::= <Mul'> */
+	ast_node *mulp = parse_mulp();
+	if (!mulp) {
+		/* TODO raise error */
+		printf("Error: parse_mulp returned null\n");
+		return NULL;
+	} else if (mulp != epsilon) {
+		printf("Info: Expected <Mul'> found\n");
+		return mulp;
+	}
+
+	/* <Assign'> ::= <Exp'> */
+	ast_node *expp = parse_expp();
+	if (!expp) {
+		/* TODO raise error */
+		printf("Error: parse_expp returned null\n");
+		return NULL;
+	} else if (expp != epsilon) {
+		printf("Info: Expected <Exp'> found\n");
+		return expp;
+	}
+
 	/* <Assign'> ::= '=' <Add> */
 	if (expect(TOK_ASSIGNMENT)) {
 		printf("Info: Expected '=' found\n");
@@ -325,7 +361,7 @@ parse_mulp()
 	}
 
 	/* <Mul'> ::= <Epsilon> */
-	printf("Info:  no '*', '/' found, reducing to epsilon\n");
+	printf("Info: no '*', '/' found, reducing to epsilon\n");
 	return epsilon;
 }
 
@@ -389,7 +425,7 @@ parse_expp()
 	}
 
 	/* <Exp'> ::= <Epsilon> */
-	printf("Info:  no '^' found, reducing to epsilon\n");
+	printf("Info: no '^' found, reducing to epsilon\n");
 	return epsilon;
 }
 
@@ -422,14 +458,14 @@ parse_term()
 		}
 		return ast_new(AST_NEG, term, NULL, 0, "");
 
-	/* Term ::= '(' <Add> ')' */
+	/* Term ::= '(' <Assign> ')' */
 	} else if (expect(TOK_LPAREN)) {
 		printf("Info: '(' found\n");
 		tokens = tk_pop_ll(tokens);
 
-		ast_node *add = parse_add();
-		if (!add) {
-			printf("Error: parse_add returned null\n");
+		ast_node *assign = parse_assign();
+		if (!assign) {
+			printf("Error: parse_assign returned null\n");
 			return NULL;
 
 		} else if (!expect(TOK_RPAREN)) {
@@ -438,7 +474,7 @@ parse_term()
 		}
 
 		tokens = tk_pop_ll(tokens);
-		return add;
+		return assign;
 	}
 
 	/* TODO raise error */

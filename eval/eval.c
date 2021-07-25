@@ -54,7 +54,8 @@ eval_ast (hashmap *heap, ast_node *head)
 		} else copy = op2;
 
 		heap = hm_set(heap, op1->identifier, copy);
-		res->type = OBJ_NULL;
+		res->type = OBJ_NUM;
+		res->num = copy->num;
 		obj_delete(op1);
 		return res;
 

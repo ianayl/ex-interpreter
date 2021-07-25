@@ -33,7 +33,12 @@ Let's do this parser thing right...
 
 <Assign>  ::= <Identifier> <Assign'>
           | <Add>
-<Assign'> ::= '=' <Add>
+# I am well aware that this is SCUFFED
+# TODO fix this grammar this is atrocious
+<Assign'> ::= <Add'>
+          | <Mul'>
+          | <Exp'>
+          | '=' <Add>
           | ε
 
 <Add>     ::= <Mul> <Add'>

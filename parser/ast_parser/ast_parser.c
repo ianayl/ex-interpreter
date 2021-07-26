@@ -2,14 +2,18 @@
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
-token* tokens = NULL;
+token *tokens = NULL;
 ast_node* epsilon;
 
 int 
-expect(tk_type type)
+expect(tk_type type, int lookup)
 {
-	/* if (tokens->next && tokens->next->type == type) return 1; */
-	if (tokens && tokens->type == type) return 1;
+	token *check;
+	for (check = tokens; lookup > 0; lookup --) {
+		if (!check) return 0;
+		check = check->next;
+	}
+	if (check && check->type == type) return 1;
 	return 0;
 }
 

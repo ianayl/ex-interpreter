@@ -4,7 +4,7 @@
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
-int expect(tk_type type, int lookup);
+int expect(tk_type type);
 
 ast_node* parse_root(token *head);
 ast_node* parse_expr();

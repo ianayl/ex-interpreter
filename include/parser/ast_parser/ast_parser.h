@@ -9,7 +9,6 @@ int expect(tk_type type, int lookup);
 ast_node* parse_root(token *head);
 ast_node* parse_expr();
 ast_node* parse_assign();
-ast_node* parse_assignp();
 ast_node* parse_add();
 ast_node* parse_addp();
 ast_node* parse_mul();

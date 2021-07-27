@@ -9,7 +9,7 @@ recursion[[1]](#1):
           |   <Assign>
 
 ; Derivation below might be problematic, consider <Indetifier> '=' <Add>
-<Assign>  ::= <Identifier> '=' <Identifier>
+<Assign>  ::= <Identifier> '=' <Assign>
           |   <Add>
 
 <Add>     ::= <Mul> <Add'>

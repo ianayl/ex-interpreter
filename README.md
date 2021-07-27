@@ -6,11 +6,11 @@ Current state of the language: [current_grammar.md](https://github.com/ianayl/ex
 
 ## Note to self:
 
+- Review `eval.c` and `ast_parser.c`; they're exceptionally scuffed and TODO's are building up lol....
+
 - Review `hashmap.c` after implementing garbage collector
     - **Btw:** consider implementing a garbage collector soon
     - Be sure to reconsider hashmap's freeing behavior after
-
-- RECONSIDER the grammar for assignments to make it work as in C instead
 
 ## Goals:
 A basic REPL interpreter that has:
@@ -22,7 +22,7 @@ A basic REPL interpreter that has:
     - [x] Generates concrete syntax trees
     - [x] Generates abstract syntax trees
 - [x] Evaluates ~~concrete~~ abstract syntax trees
-- [ ] Variables
+- [x] Variables
     - [x] Implement a hashmap
     - [x] Write and parse grammar for variables
 - [ ] Interaction

@@ -31,8 +31,7 @@ eval_ast (hashmap *heap, ast_node *head)
 
 	} else if (head->type == AST_ASSIGNMENT) {
 		if (!op1 || !op2 || op1->type != OBJ_IDENTIFIER) {
-			printf("Error: Invalid AST structure for \
-				AST_ASSIGNMENT\n");
+			printf("Error: Bad AST structure for AST_ASSIGNMENT\n");
 			free(res);
 			op1 = obj_delete(op1);
 			op2 = obj_delete(op2);
@@ -47,16 +46,34 @@ eval_ast (hashmap *heap, ast_node *head)
 		if (op2->type == OBJ_IDENTIFIER) {
 			/* TODO this is scuffed pls make less scuffed */
 			copy = (obj*) malloc(sizeof(obj));
-			obj *orig = hm_get(heap, op1->identifier);
+
+			obj *orig = hm_get(heap, op2->identifier);
+			if (!orig) {
+				printf("Error: Identifier points to nothing\n");
+				free(res);
+				op1 = obj_delete(op1);
+				op2 = obj_delete(op2);
+				free(copy);
+				return NULL;
+			}
+
 			copy->type = orig->type;
-			copy->identifier = orig->identifier;
-			copy->num = orig->num;
+			if (orig->type == OBJ_IDENTIFIER)
+				copy->identifier = orig->identifier;
+			else copy->num = orig->num;
+
+			/* 
+			 * Getting rid of op2 because just an identifier: there
+			 * is no longer need for it as it's stored in the map
+			 */
+			op2 = obj_delete(op2);
+
 		} else copy = op2;
 
 		heap = hm_set(heap, op1->identifier, copy);
 		res->type = OBJ_NUM;
 		res->num = copy->num;
-		obj_delete(op1);
+		op1 = obj_delete(op1);
 		return res;
 
 	} else if (head->type == AST_ADD) {
@@ -70,6 +87,7 @@ eval_ast (hashmap *heap, ast_node *head)
 		res->type = OBJ_NUM;
 
 		float op1_num, op2_num;
+		/* TODO CHECK IF THE IDENTIFIER IS NULL */
 		if (op1->type == OBJ_IDENTIFIER) {
 			op1_num = hm_get(heap, op1->identifier)->num;
 		} else op1_num = op1->num;

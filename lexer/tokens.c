@@ -72,6 +72,10 @@ tk_print_ll (token *head)
 			printf("Type: TOK_LPAREN (\n");
 		else if (p->type == TOK_RPAREN)
 			printf("Type: TOK_RPAREN )\n");
+		else if (p->type == KEYW_FN)
+			printf("Type: KEYW_FN fn\n");
+		else if (p->type == KEYW_RETURN)
+			printf("Type: KEYW_RETURN return\n");
 		else if (p->type == TOK_NULL)
 			printf("Type: TOK_NULL\n");
 		else

@@ -6,7 +6,12 @@ recursion[[1]](#1):
 ```
 <Start>   ::= <Expr>
 <Expr>    ::= 'return' <Assign>
+          |   'fn' <Identifier> '(' <Args> ')' '='
           |   <Assign>
+<Args>    ::= <Assign> <Args'>
+          |   ε 
+<Args'>   ::= ',' <Assign> <Args'>
+          |   ε 
 
 ; Derivation below might be problematic, consider <Indetifier> '=' <Add>
 <Assign>  ::= <Identifier> '=' <Assign>

@@ -18,7 +18,9 @@ typedef enum token_type {
 	TOK_EXP,
 	TOK_MOD,
 	TOK_LPAREN,
-	TOK_RPAREN
+	TOK_RPAREN,
+	KEYW_FN,
+	KEYW_RETURN
 } tk_type;
 
 typedef struct token {

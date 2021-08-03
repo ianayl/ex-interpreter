@@ -51,8 +51,12 @@ parse_root(token *head)
 ast_node*
 parse_expr()
 {
+	/* <Expr> ::= 'fn' <Identifier> '(' <Args> ')' '=' */
+	// if (expect());
+	printf("Info: 'fn' keyword found\n");
+
 	/* <Expr> ::= <Assign> */
-	printf("Info: No 'return' found, reducing to Assign\n");
+	printf("Info: No 'fn', 'return' found, reducing to Assign\n");
 	ast_node *assign = parse_assign();
 	if (!assign) {
 		/* TODO FREE mul WITH SOME SORT OF FN HERE */

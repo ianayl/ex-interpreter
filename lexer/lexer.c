@@ -12,11 +12,11 @@ _lex_new_tk (token *head, tk_type cur_type, char* *buf)
 			free(*buf);
 			*buf = (char*) calloc(LEXER_BUF_INCR, sizeof(char));
 			/* TODO consider a common section to if any of the above conditions passed */
-			return tk_append_ll(head, tk_new(KEYW_RETURN, 0, ""));
+			return tk_append_ll(head, tk_new(TOK_RETURN, 0, ""));
 		} else if (!strcmp(*buf, "fn")) {
 			free(*buf);
 			*buf = (char*) calloc(LEXER_BUF_INCR, sizeof(char));
-			return tk_append_ll(head, tk_new(KEYW_FN, 0, ""));
+			return tk_append_ll(head, tk_new(TOK_FN, 0, ""));
 		}
 	}
 	return tk_append_ll(head, tk_new(cur_type, num, *buf));
@@ -103,6 +103,10 @@ lex (char* src)
 		} else if (*src == ')') {
 			res = _lex_new_tk(res, cur_type, &buf);
 			res = _lex_new_tk(res, TOK_RPAREN, &buf);
+			_lex_reset_buf(&cur_type, &buf_len, &buf_pos, &buf);
+		} else if (*src == ',') {
+			res = _lex_new_tk(res, cur_type, &buf);
+			res = _lex_new_tk(res, TOK_COMMA, &buf);
 			_lex_reset_buf(&cur_type, &buf_len, &buf_pos, &buf);
 		} else {
 			printf("Lexer: Unknown character, ignoring\n");

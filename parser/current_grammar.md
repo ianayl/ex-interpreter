@@ -6,14 +6,16 @@ recursion[[1]](#1):
 ```
 <Start>   ::= <Expr>
 <Expr>    ::= 'return' <Assign>
-          |   'fn' <Identifier> '(' <Args> ')' '='
+          ;   Consider separating function declaration to another derivation
+          |   'fn' <Identifier> '(' <Param> ')' '=' <Assign>
           |   <Assign>
-<Args>    ::= <Assign> <Args'>
+<Param>   ::= <Identifier> <Param'>
           |   ε 
-<Args'>   ::= ',' <Assign> <Args'>
+<Param'>  ::= ',' <Identifier> <Param'>
           |   ε 
 
-; Derivation below might be problematic, consider <Indetifier> '=' <Add>
+
+; Derivation below might be problematic, consider <Identifier> '=' <Add>
 <Assign>  ::= <Identifier> '=' <Assign>
           |   <Add>
 

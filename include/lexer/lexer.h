@@ -5,6 +5,7 @@
 
 #define LEXER_BUF_INCR 4
 
-token* lex (char* src);
+int lex_indent_lvl(char* src);
+token* lex(char* src);
 
 #endif

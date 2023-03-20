@@ -7,6 +7,7 @@ recursion[[1]](#1):
 <Start>   ::= <Expr>
 <Expr>    ::= 'return' <Assign>
           ;   Consider separating function declaration to another derivation
+          |   'fn' <Identifier> '(' <Param> ')' '='    ; multiline here?
           |   'fn' <Identifier> '(' <Param> ')' '=' <Assign>
           |   <Assign>
 <Param>   ::= <Identifier> <Param'>

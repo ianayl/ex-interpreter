@@ -28,12 +28,12 @@ _parse_successor(ast_node *head)
 }
 
 ast_node* 
-parse_root(token *head)
+parse_root(token *head, int *expect_indent)
 {
 	tokens = head;
 	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0, "");
 
-	ast_node *res = parse_expr();
+	ast_node *res = parse_expr(expect_indent);
 	free(epsilon);
 
 	if (!res) {
@@ -49,8 +49,9 @@ parse_root(token *head)
 }
 
 ast_node*
-parse_expr()
+parse_expr(int *expect_indent)
 {
+	/* <Expr> ::= 'fn' <Identifier> '(' <Params> ')' '=' */
 	/* <Expr> ::= 'fn' <Identifier> '(' <Params> ')' '=' <Assign> */
 	if (expect(TOK_FN, 0)) {
 		printf("Info: 'fn' keyword found\n");
@@ -59,8 +60,7 @@ parse_expr()
 		if (!expect(TOK_IDENIFIER, 0)) {
 			/* TODO FREE WITH SOME SORT OF FN HERE */
 			/* TODO raise error */
-			printf("Error: Expected identifier but got %d\n",
-			       tokens->type);
+			printf("Error: Expected identifier\n");
 			return NULL;
 		}
 		ast_node *fn_name = ast_new(AST_IDENTIFIER, NULL, NULL, 0,
@@ -70,8 +70,7 @@ parse_expr()
 		if (!expect(TOK_LPAREN, 0)) {
 			/* TODO FREE WITH SOME SORT OF FN HERE */
 			/* TODO raise error */
-			printf("Error: Expected '(' but got %d\n",
-			       tokens->type);
+			printf("Error: Expected '('\n");
 			return NULL;
 		}
 		tokens = tk_pop_ll(tokens);
@@ -83,22 +82,49 @@ parse_expr()
 			printf("Error: parse_param returned null\n");
 			return NULL;
 		} else if (params == epsilon) params = NULL;
+
+		if (!expect(TOK_RPAREN, 0)) {
+			/* TODO FREE WITH SOME SORT OF FN HERE */
+			/* TODO raise error */
+			printf("Error: Expected ')'\n");
+			return NULL;
+		}
+		tokens = tk_pop_ll(tokens);
 		
 		if (!expect(TOK_ASSIGNMENT, 0)) {
 			/* TODO FREE WITH SOME SORT OF FN HERE */
 			/* TODO raise error */
-			printf("Error: Expected '=' but got %d\n",
-			       tokens->type);
+			printf("Error: Expected '='\n");
 			return NULL;
+		}
+		tokens = tk_pop_ll(tokens);
+
+		/* Assume nothing after '=' initially, then check for tokens */
+		ast_node *assign = epsilon;
+		/* <Expr> ::= 'fn' <Identifier> '(' <Params> ')' '=' */
+		if (!tokens) *expect_indent = 1;
+		/* <Expr> ::= 'fn' <Identifier> '(' <Params> ')' '=' <Assign> */
+		else if (!(assign = parse_assign())) {
+				/* TODO FREE WITH SOME SORT OF FN HERE */
+				/* TODO raise error */
+				printf("Error: parse_assign returned null\n");
+				return NULL;
 		}
 
-		ast_node *assign = parse_assign();
-		if (!assign) {
-			/* TODO FREE WITH SOME SORT OF FN HERE */
-			/* TODO raise error */
-			printf("Error: parse_assign returned null\n");
-			return NULL;
+		/* 
+		 * ASTLIST structure:
+		 * op1 = NULL 
+		 * op2 = next node 
+		 * ast = ast itself
+		 */
+		ast_node *fn_asts = NULL;
+		if (assign != epsilon) {
+			fn_asts = ast_new(AST_ASTLIST, NULL, NULL, 0, "");
+			fn_asts->ast = assign;
 		}
+		ast_node *fn = ast_new(AST_FN, fn_name, fn_asts, 0, "");
+		fn->params = params;
+		return fn;
 	}
 
 	/* <Expr> ::= <Assign> */
@@ -118,6 +144,7 @@ parse_param()
 {
 	/* <Param> ::= <Identifier> <Param'> */
 	if (expect(TOK_IDENIFIER, 0)) {
+		printf("Info: Expected identifier found: %s\n", tokens->str);
 		ast_node *identifier = ast_new(AST_PARAMLIST, NULL, NULL, 0,
 					       tokens->str);
 		tokens = tk_pop_ll(tokens);

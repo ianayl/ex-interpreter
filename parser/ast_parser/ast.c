@@ -7,7 +7,7 @@ ast_new(ast_type type, ast_node *op1, ast_node *op2, float num, char* str)
 	res->type = type;
 	res->op1 = op1;
 	res->op2 = op2;
-	if (type == AST_IDENTIFIER) {
+	if (type == AST_IDENTIFIER || type == AST_PARAMLIST) {
 		/* TODO I don't actually know if the calloc is needed here */
 		res->str = (char*) calloc(strlen(str) + 1, sizeof(char));
 		strcpy(res->str, str);
@@ -44,6 +44,14 @@ ast_print_node(ast_node* node)
 		printf("AST: Mod %%\n");
 	else if (node->type == AST_EPSILON)
 		printf("AST: Epsilon (??? how)\n");
+	else if (node->type == AST_ASTLIST)
+		printf("AST: AST list node:\n");
+	else if (node->type == AST_PARAMLIST)
+		printf("AST: Parameter: %s\n", node->str);
+	else if (node->type == AST_FN)
+		printf("AST: keyword - fn\n");
+	else if (node->type == AST_RETURN)
+		printf("AST: keyword - return\n");
 	else
 		printf("ERROR: ast_print_node - Unknown type\n");
 }
@@ -57,7 +65,14 @@ ast_print_preorder(ast_node *head, int lvl)
 	ast_print_node(head);
 
 	ast_print_preorder(head->op1, lvl + 1);
-	ast_print_preorder(head->op2, lvl + 1);
+	if (head->type == AST_FN) ast_print_preorder(head->params, lvl + 1);
+	if (head->type == AST_ASTLIST) {
+		if (head->ast) ast_print_preorder(head->ast, lvl + 1);
+		else printf("    WARNING: ASTLIST NODE IS NULL\n");
+		ast_print_preorder(head->next, lvl);
+	} else if (head->type == AST_PARAMLIST)
+		ast_print_preorder(head->next, lvl);
+	else ast_print_preorder(head->op2, lvl + 1);
 }
 
 ast_node*

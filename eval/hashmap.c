@@ -15,6 +15,7 @@ hm_hash(hashmap *src, char* key)
 	}
 
 	return hash % src->size;
+	// size of hash table should be prime and not even
 }
 
 hashmap*

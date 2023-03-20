@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 token*
-_lex_new_tk (token *head, tk_type cur_type, char* *buf)
+_lex_new_tk(token *head, tk_type cur_type, char* *buf)
 {
 	float num = (cur_type == TOK_NUM) ? num = atof(*buf) : 0;
 	if (cur_type == TOK_NULL) return head;
@@ -23,7 +23,7 @@ _lex_new_tk (token *head, tk_type cur_type, char* *buf)
 }
 
 void
-_lex_reset_buf (tk_type *cur_type, int *buf_len, int *buf_pos, char* *buf)
+_lex_reset_buf(tk_type *cur_type, int *buf_len, int *buf_pos, char* *buf)
 {
 	*cur_type = TOK_NULL;
 	*buf_len = LEXER_BUF_INCR;
@@ -32,8 +32,16 @@ _lex_reset_buf (tk_type *cur_type, int *buf_len, int *buf_pos, char* *buf)
 	*buf = (char*) calloc(*buf_len, sizeof(char));
 }
 
+int
+lex_indent_lvl(char* src)
+{
+	char* res = src;
+	while (*res == ' ') res++;
+	return (int) (res - src);
+}
+
 token*
-lex (char* src)
+lex(char* src)
 {
 	token *res = NULL;
 

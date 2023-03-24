@@ -1,6 +1,14 @@
 #include "parser/cst_parser/cst_parser.h"
 #include "parser/cst_parser/cst.h"
 
+/*
+ * THIS FILE IS DEPRECATED
+ *
+ * It is inefficient to convert to a CST and then convert the CST into an AST,
+ * or vice versa, although less inefficient, evaluate a CST instead of an AST.
+ * For efficiency's sake, I will be parsing to an AST from now on.
+ */
+
 int 
 expect (tk_type type)
 {

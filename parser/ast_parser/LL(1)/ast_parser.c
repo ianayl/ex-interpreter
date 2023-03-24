@@ -2,6 +2,8 @@
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
+/* DEPRECATED -- USE LL(2) PARSER INSTEAD */
+
 token* tokens = NULL;
 ast_node* epsilon;
 

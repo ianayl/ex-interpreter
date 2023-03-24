@@ -1,6 +1,10 @@
 #ifndef CST_PARSER_H
 #define CST_PARSER_H
 
+/* 
+ * DEPRECATED -- USE AST_PARSER INSTEAD
+ */
+
 #include "lexer/tokens.h"
 #include "parser/cst_parser/cst.h"
 

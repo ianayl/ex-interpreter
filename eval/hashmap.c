@@ -3,6 +3,13 @@
 #include <stdio.h>
 #include "eval/hashmap.h"
 
+/*
+ * Hashmap (for identifiers) -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN hashmap.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
 unsigned long
 hm_hash(hashmap *src, char* key)
 {
@@ -15,7 +22,7 @@ hm_hash(hashmap *src, char* key)
 	}
 
 	return hash % src->size;
-	// size of hash table should be prime and not even
+	// TODO: size of hash table should be prime and not even: Enforce this?
 }
 
 hashmap*
@@ -29,6 +36,9 @@ hm_new(unsigned long initial_size)
 	return res;
 }
 
+/**
+ * Create a key to object pair to be inserted into the hashmap
+ */
 hm_entry*
 hm_new_pair(char* key, obj *val)
 {
@@ -48,6 +58,10 @@ hm_new_pair(char* key, obj *val)
 	return res;
 }
 
+/**
+ * Expand the hashmap by HM_EXPAND_FACTOR (by creating a new hash table and
+ * transferring all files over)
+ */
 hashmap*
 hm_expand(hashmap *src)
 {
@@ -58,11 +72,14 @@ hm_expand(hashmap *src)
 	res->entries = (hm_entry**) calloc(res->size, sizeof(hm_entry*));
 	res->occupied = 0;
 
+	/* Transfer all the old keys over to the new table */
 	for (int i = 0; i < src->size; i++)
 		for (hm_entry *p = src->entries[i]; p; p = p->next)
 			hm_set(res, p->key, p->val);
 
 	return res;
+
+	// TODO: did you free?
 }
 
 hashmap*
@@ -70,6 +87,7 @@ hm_set(hashmap *src, char* key, obj *val)
 {
 	unsigned long pos = hm_hash(src, key);
 
+	/* If there's nothing in that entry -- no collision */
 	if (!src->entries[pos]) {
 		/*
 		 * Note: Floating point arithmetic sucks. Eg. sometimes 
@@ -89,6 +107,10 @@ hm_set(hashmap *src, char* key, obj *val)
 		return src;
 	}
 
+	/*
+	 * Collision -- find the last node in the separate chaining list and 
+	 * insert later
+	 */
 	hm_entry *prev;
 	for (hm_entry *p = src->entries[pos]; p; p = p->next) {
 		if (!strcmp(p->key, key)) {
@@ -109,12 +131,16 @@ hm_set(hashmap *src, char* key, obj *val)
 		prev = p;
 	}
 
+	/* Expand hashmap if it breaks the maximum load threshold */
 	if ((((long double) src->occupied + 1) /
 	    ((long double) src->size)) > HM_LOAD_THRESHOLD) {
 		hashmap *res = hm_expand(src);
 		res = hm_set(res, key, val);
 		src = hm_clear(src);
 		return res;
+		// TODO: should I be incrementing occupied here?
+	
+	/* Otherwise append the new pair normally */
 	} else {
 		prev->next = hm_new_pair(key, val);
 		src->occupied ++;
@@ -126,6 +152,7 @@ obj*
 hm_get(hashmap *src, char* key)
 {
 	unsigned long pos = hm_hash(src, key);
+	/* Unfortunately, due to collisions we must traverse the linked list */
 	for (hm_entry *p = src->entries[pos]; p; p = p->next)
 		if (!strcmp(p->key, key)) return p->val;
 	return NULL;
@@ -142,8 +169,9 @@ hm_delete(hashmap *src, char* key)
 
 	unsigned long pos = hm_hash(src, key);
 
-	if (!src->entries[pos]) return;
+	if (!src->entries[pos]) return; /* Key not found */
 
+	/* Key is found, and there are no collisions: */
 	if (!strcmp(src->entries[pos]->key, key)) {
 		hm_entry *next = src->entries[pos]->next;
 		free(src->entries[pos]->key);
@@ -154,8 +182,9 @@ hm_delete(hashmap *src, char* key)
 		return;
 	}
 
+	/* Key is found, but clearly there are collisions: */
 	hm_entry *prev = src->entries[pos];
-	for (hm_entry *p = prev->next; p; p = p->next)
+	for (hm_entry *p = prev->next; p; p = p->next) /* Must traverse chain */
 		if (!strcmp(p->key, key)) {
 			prev->next = p->next;
 			free(p->key);
@@ -175,6 +204,7 @@ hm_clear(hashmap *src)
 	 * handled by the garbage collector. Remember to free hm_entry though.
 	 */
 
+	/* Literally go thorugh the entire hashmap and free each element... */
 	for (int i = 0; i < src->size; i++) {
 		hm_entry *tmp;
 		while (src->entries[i]) {
@@ -195,6 +225,7 @@ void
 hm_print(hashmap *src)
 {
 	if (!src) return;
+	/* Literally go through every element in the hashmap... */
 	for (int i = 0; i < src->size; i++)
 		for (hm_entry *p = src->entries[i]; p; p = p->next)
 			printf("(%d)  %s: %f\n", i, p->key, p->val->num);

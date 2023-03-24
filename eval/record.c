@@ -1,5 +1,12 @@
 #include "eval/record.h"
 
+/*
+ * Activation records (Stack frame) -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN record.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
 record* record_new(record *prev, int indent_lvl)
 {
 	record *res = (record*) malloc(sizeof(record));

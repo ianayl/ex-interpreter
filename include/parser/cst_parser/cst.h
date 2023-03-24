@@ -1,6 +1,10 @@
 #ifndef CST_H
 #define CST_H
 
+/* 
+ * DEPRECATED -- USE AST'S INSTEAD
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 

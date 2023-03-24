@@ -11,10 +11,15 @@
 #define SHELL_PROMPT_ROOT ">>> "
 #define SHELL_PROMPT_INDENT "... "
 
+/* root "stack frames" / "activation record" - contains hashmap */
 record *root_rec;
+
+/* Status flags for the interpreter */
+// TODO: eventually read from command line arugments instead
 u_int8_t use_shell = 1;
 u_int8_t debug = 1;
 
+/* Fill buffer with input from stdin */
 char*
 shell_readline()
 {
@@ -22,9 +27,10 @@ shell_readline()
 	int buf_size = SHELL_BUF_INCR;
 	int i = 0;
 	char c;
+	/* While there is still input, keep filling up buffer */
 	while ((c = getchar()) != '\n' && c != '\0' && c != EOF) {
 		buf[i++] = c;
-		if (i == buf_size) {
+		if (i == buf_size) { /* Buffer full, dynamically reallocate */
 			buf_size = buf_size + SHELL_BUF_INCR;
 			buf = (char*) realloc(buf, buf_size + SHELL_BUF_INCR);
 		}
@@ -34,6 +40,7 @@ shell_readline()
 	return buf;
 }
 
+/* Process one line of input from the shell, and produce a parse tree */
 ast_node*
 shell_getline(record *rec, int indent_lvl)
 {
@@ -46,7 +53,11 @@ shell_getline(record *rec, int indent_lvl)
 		printf("==> Lex output: ----------------------------------\n");
 		printf("Indent level: %d\n", lex_indent_lvl(input));
 	}
-	token *list = lex(input);
+
+	/*
+	 * READ-EVALUATE-PRINT LOOP STARTS HERE
+	 */
+	token *list = lex(input); /* Lexer */
 	free(input);
 	if (debug) tk_print_ll(list);
 
@@ -54,14 +65,16 @@ shell_getline(record *rec, int indent_lvl)
 		printf("==> Parse output: --------------------------------\n");
 	/* NOTE: No need to free list: parser frees list automatically */
 	int expect_indent = 0;
-	ast_node *res = parse_root(list, &expect_indent);
+	ast_node *res = parse_root(list, &expect_indent); /* Parser */
 	if (debug) {
 		ast_print_preorder(res, 0);
 		printf("Expect indent: %s\n", (expect_indent) ? "YES" : "NO");
 	}
 
+	/* Incase an indented line is expected: */
 	ast_node *tmp;
 	while (expect_indent) {
+		/* Keep reading */
 		tmp = shell_getline(rec, indent_lvl + 1);
 		if (!tmp) {
 			expect_indent = 0;
@@ -94,14 +107,19 @@ main(int argc, char** argv)
 	u_int8_t shell_continue = 1;
 	while(shell_continue) {
 
+		/* 
+		 * NOTE: REPL loop actually begins here, lexing and parsing are
+		 * both handled here already.
+		 */
 		ast_node *test = shell_getline(root_rec, 0);
 
 		if (debug)
 			printf("==> Evaluation: ----------------------------------\n");
-		obj *res = eval_ast(root_rec->map, test);
+		obj *res = eval_ast(root_rec->map, test); /* Evaluation */
 		if (debug) {
 			printf("Evaluated result: ");
 			obj_print(res);
+			/* Clean up */
 			res = obj_delete(res);
 			printf("Heap dump:\n");
 			hm_print(root_rec->map);
@@ -113,5 +131,6 @@ main(int argc, char** argv)
 		}
 	}
 
+	/* Root activation record no longer needed */
 	root_rec = record_free(root_rec);
 }

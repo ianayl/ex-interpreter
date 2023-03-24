@@ -1,5 +1,12 @@
 #include "parser/ast_parser/ast.h"
 
+/*
+ * Abstract syntax tree nodes -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN ast.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
 ast_node* 
 ast_new(ast_type type, ast_node *op1, ast_node *op2, float num, char* str)
 {
@@ -62,17 +69,19 @@ ast_print_preorder(ast_node *head, int lvl)
 	if (!head) return;
 
 	for (int i = 0; i < lvl; i++) printf("    ");
-	ast_print_node(head);
+	ast_print_node(head); /* Print information about the root node */
 
-	ast_print_preorder(head->op1, lvl + 1);
+	ast_print_preorder(head->op1, lvl + 1); /* Print the left subtree */
+	/* Special case: Is the AST a function? */
 	if (head->type == AST_FN) ast_print_preorder(head->params, lvl + 1);
+	/* Special case: Is the AST a list of AST's? (function body) */
 	if (head->type == AST_ASTLIST) {
 		if (head->ast) ast_print_preorder(head->ast, lvl + 1);
 		else printf("    WARNING: ASTLIST NODE IS NULL\n");
 		ast_print_preorder(head->next, lvl);
 	} else if (head->type == AST_PARAMLIST)
 		ast_print_preorder(head->next, lvl);
-	else ast_print_preorder(head->op2, lvl + 1);
+	else ast_print_preorder(head->op2, lvl + 1); /* else print the right subtree */
 }
 
 ast_node*
@@ -82,8 +91,10 @@ ast_free(ast_node *head)
 	/* Epsilon is usually a special node; don't delete epsilon */
 	if (head->type == AST_EPSILON) return NULL;
 
+	/* Free the subtrees first, then free yourself */
 	ast_free(head->op1);
 	ast_free(head->op2);
+	/* If the AST node has a string value, free the string value first */
 	if (head->type == AST_IDENTIFIER) free(head->str);
 	free(head);
 

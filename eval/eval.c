@@ -5,6 +5,16 @@
 #include "eval/object.h"
 #include "parser/ast_parser/ast.h"
 
+/*
+ * Tree-walk evaluator -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN eval.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
+// TODO: heap is a bad name for the hashmap, clean this up in the future
+// also: shouldn't I store a pointer to the activation record instead?
+// TODO: This is ugly and would be better if each AST node has it's own evaluator
 obj*
 eval_ast (hashmap *heap, ast_node *head)
 {
@@ -15,6 +25,8 @@ eval_ast (hashmap *heap, ast_node *head)
 		return NULL;
 	}
 
+	/* Evaluate children first */
+	// TODO this will need to change with functions
 	obj *op1 = eval_ast(heap, head->op1);
 	obj *op2 = eval_ast(heap, head->op2);
 	obj *res = (obj*) malloc(sizeof(obj));
@@ -24,6 +36,7 @@ eval_ast (hashmap *heap, ast_node *head)
 		res->num = head->num;
 
 	} else if (head->type == AST_IDENTIFIER) {
+		/* Fetch identifier */
 		res->type = OBJ_IDENTIFIER;
 		res->identifier = (char*) calloc(strlen(head->str) + 1,
 						 sizeof(char));
@@ -70,6 +83,7 @@ eval_ast (hashmap *heap, ast_node *head)
 
 		} else copy = op2;
 
+		/* Perform assignment */
 		heap = hm_set(heap, op1->identifier, copy);
 		res->type = OBJ_NUM;
 		res->num = copy->num;

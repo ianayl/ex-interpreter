@@ -1,6 +1,8 @@
 #ifndef AST_PARSER_H
 #define AST_PARSER_H
 
+/* DEPRECATED -- PLEASE USE THE LL(2) PARSER ONE DIRECTORY BEFORE */
+
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 

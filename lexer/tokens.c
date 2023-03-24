@@ -1,10 +1,21 @@
 #include "lexer/tokens.h"
 
+/*
+ * Lexeme tokens -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN tokens.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
 token* 
 tk_new (tk_type type, float num, char* str)
 {
 	token* res = (token*) malloc(sizeof(token));
 	res->type = type;
+	/* 
+	 * If the token has a string value (only identifiers for now),
+	 * allocate a new string for it
+	 */
 	if (type == TOK_IDENIFIER) {
 		res->str = (char*) calloc(strlen(str) + 1, sizeof(char));
 		strcpy(res->str, str);
@@ -20,6 +31,9 @@ tk_append_ll (token *head, token *n)
 	if (!head) return n;
 
 	token* p = head;
+	/* Get to the end the linked list */
+	// TODO: Maybe keeping track of the tail of a token list isn't a shabby
+	//       idea? but would involve more abstractions in the form of a struct
 	for (; p->next; p = p->next);
 	p->next = n;
 	return head;
@@ -28,7 +42,8 @@ tk_append_ll (token *head, token *n)
 token*
 tk_delete_ll (token *head)
 {
-	token *p;
+	token *p; /* Previous node */
+	/* As long as head isn't NULL (end of list), free the previous token */ 
 	while (head) {
 		p = head;
 		head = head->next;
@@ -123,8 +138,8 @@ tk_pop_ll (token* head)
 {
 	if (!head)
 		return NULL;
-	token* res = head->next;
+	token* res = head->next; /* New head is the next token */
 	if (head->type == TOK_IDENIFIER) free(head->str);
 	free(head);
-	return res;
+	return res; /* Return new head */
 }

@@ -2,8 +2,15 @@
 #include "lexer/tokens.h"
 #include "parser/ast_parser/ast.h"
 
-token *tokens = NULL;
-ast_node* epsilon;
+/*
+ * AST parser -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN ast_parser.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
+token *tokens = NULL; /**< Pointer to token list to consume from */
+ast_node* epsilon;    /**< An epsilon singleton that can be reused */
 
 int 
 expect(tk_type type, int lookup)
@@ -17,6 +24,10 @@ expect(tk_type type, int lookup)
 	return 0;
 }
 
+/* 
+ * Find the leftmost node in the given subtree head: used to stitch AST's so
+ * that they make sense
+ */
 ast_node*
 _parse_successor(ast_node *head)
 {
@@ -31,19 +42,24 @@ ast_node*
 parse_root(token *head, int *expect_indent)
 {
 	tokens = head;
+	/* Initialize a single epsilon to save the malloc's for new epsilon's */
 	epsilon = ast_new(AST_EPSILON, NULL, NULL, 0, "");
 
+	/* Commence the parsing with the first derivation: */
 	ast_node *res = parse_expr(expect_indent);
 	free(epsilon);
 
 	if (!res) {
 		/* TODO raise error: Invalid parse */
 		printf("Error: tree is null\n");
+
+	/* If head is not null: tokens left over */
 	} else if (tokens) {
 		/* TODO raise error: Unfinished grammar */
 		printf("Error: tokens left. LEFTOVER TOKENS:\n");
 		tk_print_ll(tokens);
 	}
+	/* TODO hide debug output */
 	tk_print_ll(tokens);
 	return res;
 }

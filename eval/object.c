@@ -3,11 +3,19 @@
 #include <string.h>
 #include "eval/object.h"
 
+/*
+ * Objects (variables) -- implementation code
+ *
+ * DOCUMENTATION FOR PUBLIC FUNCTIONS ARE LOCATED IN object.h INSTEAD
+ * This is done so that language servers can pick up function descriptions
+ */
+
 obj* 
 obj_new(obj_type type, float num, char *identifier)
 {
 	obj *res = (obj*) malloc(sizeof(obj));
 	res->type = type;
+	/* Only set either num or identifier depending on the type */
 	if (type == OBJ_IDENTIFIER) {
 		res->identifier = (char*) calloc(strlen(identifier) + 1,
 						 sizeof(char));

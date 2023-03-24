@@ -1,5 +1,13 @@
 #include "parser/cst_parser/cst.h"
 
+/*
+ * THIS FILE IS DEPRECATED
+ *
+ * It is inefficient to convert to a CST and then convert the CST into an AST,
+ * or vice versa, although less inefficient, evaluate a CST instead of an AST.
+ * For efficiency's sake, I will be parsing to an AST from now on.
+ */
+
 cst_node* 
 cst_new (cst_type type, cst_node *op1, cst_node *op2, int val)
 {

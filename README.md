@@ -1,3 +1,7 @@
+# Note
+
+Currently being rewritten in C++ at https://github.com/ianayl/compiler
+
 # Experimental Interpreter
 
 A toy programming language meant as a way to study interpreters and how to write them. This is purely a hobby project and is intended as a means to develop the skills necessary to eventually write a general purpose programming language.
